@@ -105,7 +105,6 @@ end;
 function TFileLock.lock(_type: TLockType; timeOut: Int64; key: IAsyncKeyState): TLockType;
   var
     mode: LongWord;
-    attemps: Integer;
     timer: TRTimerData;
 begin
   if(fStatus=_type) then begin

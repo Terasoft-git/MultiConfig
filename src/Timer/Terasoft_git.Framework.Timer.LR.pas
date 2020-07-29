@@ -68,7 +68,7 @@ end;
 function TLRTimer.mark(ptr: PTRTimerData): TRTimerData;
   var
     dh: Cardinal;
-    count: Cardinal;
+//    count: Cardinal;
 begin
   if(ptr=nil) then exit;
   ptr^.precision := tmrLowResolution;
@@ -77,15 +77,15 @@ begin
     dh := GetTickCount;
     if(dh<_old) then begin
       _old := dh;
-      inc(count);
+      inc(_counts);
     end else begin
       _old := dh;
-      count := _counts;
+      //count := _counts;
     end;
   finally
     cs.Leave;
   end;
-  ptr.mark := (TLargeInteger(count) shl TLargeInteger(32)) + dh;
+  ptr.mark := (TLargeInteger(_counts) shl TLargeInteger(32)) + dh;
   Result := ptr^;
 end;
 

@@ -17,7 +17,7 @@ type
     procedure BitBtn1Click(Sender: TObject);
     procedure BitBtn2Click(Sender: TObject);
   private
-    lock: ILock;
+    lock1, lock2: ILock;
     { Private declarations }
   public
     { Public declarations }
@@ -35,28 +35,23 @@ implementation
   Terasoft_git.Framework.Timer;
 
 procedure TfrmTest.BitBtn1Click(Sender: TObject);
-  var
-    msg: String;
-    lock2: ILock;
+  function lockIt(timeout: Integer = 2000): ILock;
+    var
+      msg: String;
+  begin
+    Result := FileILock('');
+    if Result.lock(timeout)<>ltExclusive then
+      msg := 'Not locked'
+    else
+      msg := 'Locked';
+    mm.Lines.Add(format('Lock: %s', [ msg ]));
+  end;
 begin
 
   mm.Lines.Clear;
 
-  lock  := FileILock('');
-  if lock.lock<>ltExclusive then
-    msg := 'Not exclusive.'
-  else
-    msg := 'Locked';
-
-  mm.Lines.Add(format('Lock 1: %s', [ msg ]));
-
-  lock2 := FileILock('');
-  if lock2.lock(ltExclusive,10000)<>ltExclusive then
-    msg := 'Not Locked'
-  else
-    msg := 'Locked';
-
-  mm.Lines.Add(format('Lock 2: %s', [ msg ]));
+  lock1  := lockIt;
+  lock2  := lockIt;
 
 end;
 

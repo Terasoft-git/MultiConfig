@@ -6,3 +6,5 @@ Sources can be files, comand lines parameters, registry entries ou even environm
 
 It takes the first source in the list, reads it section/value pair and if the value is found, returns it, if not, continues this logic until it finds it, or returns DEFAULT value if it is not found.
 
+It uses Spring4D Framework (git clone https://bitbucket.org/sglienke/spring4d.git)
+
