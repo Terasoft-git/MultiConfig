@@ -33,11 +33,9 @@ interface
 
   function FileILock(const fileName: String; const saveUserData: boolean = false): ILock;
 
-
 implementation
   uses
     Terasoft_git.Framework.Lock.Files;
-
 
 function FileILock(const fileName: String; const saveUserData: boolean = false): ILock;
 begin
