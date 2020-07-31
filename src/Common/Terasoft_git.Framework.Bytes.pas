@@ -22,13 +22,13 @@ interface
   function ReverseBitsOfBytes(bytes: TBytes): TBytes;
 
   //Insecure random number generator from delphi lib, but sometimes good for non critical purposes...
-  function randomBytes(count: Integer): TBytes;
+  function randomBytes(count: byte): TBytes;
   function concatBytes(const bytes: array of TBytes): TBytes;
 
 
 implementation
   uses
-    Spring.Cryptography, Soap.EncdDecd;
+    Spring.Cryptography, Soap.EncdDecd, Math;
 
 function sha256OfBytes(const bytes: TBytes; count: Integer = 1): TBytes;
 begin
@@ -158,10 +158,11 @@ begin
   end;
 end;
 
-function randomBytes(count: Integer): TBytes;
+function randomBytes(count: byte): TBytes;
 begin
   SetLength(Result,count);
-  CreateRandomNumberGenerator.GetBytes(Result);
+  if(count>0) then
+    CreateRandomNumberGenerator.GetBytes(Result);
 end;
 
 function concatBytes(const bytes: array of TBytes): TBytes;

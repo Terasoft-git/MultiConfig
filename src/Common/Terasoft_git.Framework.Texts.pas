@@ -21,6 +21,7 @@ interface
 
 
   function createIStrings(caseSensitive: boolean = false; const text: String = ''): IStrings;
+  function textBetweenTags ( Text, initTag, endTag: String; firstOccurrence: PInteger = nil; caseSensitive: boolean = true; initalPosition: PInteger = nil ): string;
 
 
 implementation
@@ -78,6 +79,11 @@ end;
 procedure TLocalStrings.setText(const value: WideStringFramework);
 begin
   fList.Text := value;
+end;
+
+function textBetweenTags ( Text, initTag, endTag: String; firstOccurrence: PInteger = nil; caseSensitive: boolean = true; initalPosition: PInteger = nil ): string;
+begin
+
 end;
 
 end.

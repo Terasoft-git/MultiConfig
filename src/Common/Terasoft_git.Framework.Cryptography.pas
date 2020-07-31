@@ -13,6 +13,9 @@ interface
       function encryptBytes(const bytes: TBytes): TBytes;
       function decryptBytes(const bytes: TBytes): TBytes;
       procedure setSeed(const seed: TBytes);
+      procedure setSaltLen(const value: Integer);
+      function getSaltlen: Integer;
+      property saltLen: Integer read getSaltlen write setSaltlen;
     end;
 
   var
@@ -25,7 +28,7 @@ implementation
     Spring.Cryptography, Terasoft_git.Framework.Bytes;
 
   const
-    SALTCOUNT = 4;
+    DEFSALTLEN = 4;
 
   {$if defined(DEBUG)}
       DUMMY_SEED = 'DUMMY KEY ALLERT!!! Just For initialization and test!!! Do not use this SEED!!!';
@@ -35,13 +38,16 @@ implementation
 
   type
     // Simple Crypter that uses Spring.Cryptography
-    TCripter=class(TInterfacedObject, ICryptografy)
+    TCrypter=class(TInterfacedObject, ICryptografy)
     protected
+      fSaltlen: Integer;
       crypter: ITripleDES;
       function encryptString(const str: WideStringFramework): TBytes;
       function encryptBytes(const bytes: TBytes): TBytes;
       function decryptBytes(const bytes: TBytes): TBytes;
       procedure setSeed(const seed: TBytes);
+      procedure setSaltLen(const value: Integer);
+      function getSaltlen: Integer;
     public
       constructor Create;
       destructor Destroy; override;
@@ -50,45 +56,60 @@ implementation
 
 function createCrypter(const seed: TBytes): ICryptografy;
 begin
-  Result := TCripter.Create;
+  Result := TCrypter.Create;
   Result.setSeed(seed);
 end;
 
 { TCripter }
 
-constructor TCripter.Create;
+constructor TCrypter.Create;
 begin
   inherited;
+  fSaltlen := DEFSALTLEN;
   crypter := CreateTripleDES;
   crypter.CipherMode := TCipherMode.CBC;
 end;
 
-function TCripter.encryptBytes(const bytes: TBytes): TBytes;
+function TCrypter.encryptBytes(const bytes: TBytes): TBytes;
   var
     b: TBytes;
 begin
   // Always concat 2 bytes ramdonly..
-  b := randomBytes(SALTCOUNT);
+  b := randomBytes(fSaltlen);
   Result := crypter.Encrypt(concatBytes([b, bytes]));
 end;
 
-function TCripter.encryptString(const str: WideStringFramework): TBytes;
+function TCrypter.encryptString(const str: WideStringFramework): TBytes;
 begin
   Result := encryptBytes(BytesOf(str));
 end;
 
-function TCripter.decryptBytes(const bytes: TBytes): TBytes;
+function TCrypter.getSaltlen: Integer;
 begin
-  Result := crypter.Decrypt(bytes);
-  Result := Copy(Result, SALTCOUNT, MaxInt);
+  Result := fSaltlen;
 end;
 
-destructor TCripter.Destroy;
+function TCrypter.decryptBytes(const bytes: TBytes): TBytes;
+begin
+  Result := crypter.Decrypt(bytes);
+  Result := Copy(Result, fSaltlen, MaxInt);
+end;
+
+destructor TCrypter.Destroy;
 begin
   inherited;
 end;
 
-procedure TCripter.setSeed(const seed: TBytes);
+procedure TCrypter.setSaltLen(const value: Integer);
+begin
+  if(value<0) then
+    raise Exception.CreateFmt('TCrypter.setSaltLen: Value [%d] is invalid for Saltlen.', [ value ]);
+
+  fSaltlen := value;
+
+end;
+
+procedure TCrypter.setSeed(const seed: TBytes);
   var
     k: TBytes;
 begin
