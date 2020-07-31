@@ -104,6 +104,7 @@
         <DCCReference Include="..\src\MultiConfig\Terasoft_git.Framework.MultiConfig.pas"/>
         <DCCReference Include="..\src\Common\Terasoft_git.Framework.Cryptography.pas"/>
         <DCCReference Include="..\src\Common\Terasoft_git.Framework.Bytes.pas"/>
+        <DCCReference Include="..\src\MultiConfig\Terasoft_git.Framework.MultiConfig.INI.pas"/>
         <None Include="..\README.md"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
