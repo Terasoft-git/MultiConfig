@@ -78,15 +78,13 @@ begin
     if(dh<_old) then begin
       _old := dh;
       inc(_counts);
-    end else begin
+    end else
       _old := dh;
-      //count := _counts;
-    end;
+    ptr.mark := (TLargeInteger(_counts) shl TLargeInteger(32)) + dh;
+    Result := ptr^;
   finally
     cs.Leave;
   end;
-  ptr.mark := (TLargeInteger(_counts) shl TLargeInteger(32)) + dh;
-  Result := ptr^;
 end;
 
 function TLRTimer.Minutes(initial, _end: TRTimerData): TLargeInteger;

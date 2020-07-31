@@ -102,6 +102,8 @@
         <DCCReference Include="..\src\Timer\Terasoft_git.Framework.Timer.LR.pas"/>
         <DCCReference Include="..\src\Timer\Terasoft_git.Framework.Timer.pas"/>
         <DCCReference Include="..\src\MultiConfig\Terasoft_git.Framework.MultiConfig.pas"/>
+        <DCCReference Include="..\src\Common\Terasoft_git.Framework.Cryptography.pas"/>
+        <DCCReference Include="..\src\Common\Terasoft_git.Framework.Bytes.pas"/>
         <None Include="..\README.md"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

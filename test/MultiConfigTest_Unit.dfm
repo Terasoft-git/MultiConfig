@@ -34,8 +34,8 @@ object frmTest: TfrmTest
         OnClick = BitBtn1Click
       end
       object BitBtn2: TBitBtn
-        Left = 16
-        Top = 72
+        Left = 128
+        Top = 24
         Width = 75
         Height = 25
         Caption = 'Test LRTimer'
@@ -51,6 +51,15 @@ object frmTest: TfrmTest
         Lines.Strings = (
           'mm')
         TabOrder = 2
+      end
+      object BitBtn3: TBitBtn
+        Left = 232
+        Top = 24
+        Width = 75
+        Height = 25
+        Caption = 'Teste Crypter'
+        TabOrder = 3
+        OnClick = BitBtn3Click
       end
     end
   end

@@ -142,8 +142,7 @@ begin
       saveUserData;
       break;
     end;
-    if(key<>nil) and key.ocurred then break;
-    if(timeOut > 0) and ( lrTimerGlobal.mSec(timer,lrTimerGlobal.mark) > timeOut ) then
+    if ( (key<>nil) and key.ocurred ) or ( (timeOut > 0) and ( lrTimerGlobal.mSec(timer,lrTimerGlobal.mark) > timeOut )) then
       break;
 
     Sleep(100);

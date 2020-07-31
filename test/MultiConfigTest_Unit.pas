@@ -14,8 +14,10 @@ type
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
     mm: TMemo;
+    BitBtn3: TBitBtn;
     procedure BitBtn1Click(Sender: TObject);
     procedure BitBtn2Click(Sender: TObject);
+    procedure BitBtn3Click(Sender: TObject);
   private
     lock1, lock2: ILock;
     { Private declarations }
@@ -32,7 +34,8 @@ implementation
 
   uses
     Terasoft_git.Framework.Lock.Files, Terasoft_git.Framework.VisualMessage,
-  Terasoft_git.Framework.Timer;
+  Terasoft_git.Framework.Timer, Terasoft_git.Framework.Cryptography,
+  Terasoft_git.Framework.Bytes;
 
 procedure TfrmTest.BitBtn1Click(Sender: TObject);
   function lockIt(timeout: Integer = 2000): ILock;
@@ -71,6 +74,26 @@ begin
 
     mm.Lines.Add(format('Processing time: %dms', [ lrTimerGlobal.mSec(initial,lrTimerGlobal.mark) ]));
   end;
+
+end;
+
+procedure TfrmTest.BitBtn3Click(Sender: TObject);
+  var
+    key1, key2: TBytes;
+    s: String;
+begin
+  key1 := BytesOf('Test it.');
+  s :=   StringOf(key1);
+  mm.Lines.Add(format('Original Text: %s', [s]));
+  s := bytesToHexString(key1);
+  s := bytesToBase64String(globalCrypter.encryptString('Test it.'),false);
+  mm.Lines.Add(format('Base64 of Encrypted Text: %s', [s]));
+  key1 := globalCrypter.encryptBytes(key1);
+  mm.Lines.Add(format('Encrypted Text: %s', [stringOf(key1)]));
+  key2 := base64StringToBytes(s);
+  key1 := globalCrypter.decryptBytes(key2);
+  s := StringOf(key1);
+  mm.Lines.Add(format('Decrypted Text: %s', [s]));
 
 end;
 

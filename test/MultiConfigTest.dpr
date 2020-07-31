@@ -12,7 +12,9 @@ uses
   Terasoft_git.Framework.Texts in '..\src\Common\Terasoft_git.Framework.Texts.pas',
   Terasoft_git.Framework.Timer.LR in '..\src\Timer\Terasoft_git.Framework.Timer.LR.pas',
   Terasoft_git.Framework.Timer in '..\src\Timer\Terasoft_git.Framework.Timer.pas',
-  Terasoft_git.Framework.MultiConfig in '..\src\MultiConfig\Terasoft_git.Framework.MultiConfig.pas';
+  Terasoft_git.Framework.MultiConfig in '..\src\MultiConfig\Terasoft_git.Framework.MultiConfig.pas',
+  Terasoft_git.Framework.Cryptography in '..\src\Common\Terasoft_git.Framework.Cryptography.pas',
+  Terasoft_git.Framework.Bytes in '..\src\Common\Terasoft_git.Framework.Bytes.pas';
 
 begin
   Application.Initialize;
