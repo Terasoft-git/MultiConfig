@@ -20,7 +20,7 @@ interface
 
 implementation
   uses
-    Windows, Forms;
+    Windows, Forms, SysUtils;
 
   type
     TKeyState=class(TInterfacedObject,IAsyncKeyState)
@@ -82,7 +82,10 @@ end;
 
 procedure ShowError(const msg: String; doAbort: boolean = true);
 begin
-
+  if(interactive) then
+    Application.MessageBox(pchar(msg),'');
+  if(doAbort) then
+    Abort;
 end;
 
 

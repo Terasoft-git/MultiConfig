@@ -24,10 +24,14 @@ implementation
   uses
     Spring.Cryptography, Terasoft_git.Framework.Bytes;
 
+  const
+    SALTCOUNT = 4;
+
   {$if defined(DEBUG)}
-    const
       DUMMY_SEED = 'DUMMY KEY ALLERT!!! Just For initialization and test!!! Do not use this SEED!!!';
   {$ifend}
+
+
 
   type
     // Simple Crypter that uses Spring.Cryptography
@@ -60,8 +64,12 @@ begin
 end;
 
 function TCripter.encryptBytes(const bytes: TBytes): TBytes;
+  var
+    b: TBytes;
 begin
-  Result := crypter.Encrypt(bytes);
+  // Always concat 2 bytes ramdonly..
+  b := randomBytes(SALTCOUNT);
+  Result := crypter.Encrypt(concatBytes([b, bytes]));
 end;
 
 function TCripter.encryptString(const str: WideStringFramework): TBytes;
@@ -72,6 +80,7 @@ end;
 function TCripter.decryptBytes(const bytes: TBytes): TBytes;
 begin
   Result := crypter.Decrypt(bytes);
+  Result := Copy(Result, SALTCOUNT, MaxInt);
 end;
 
 destructor TCripter.Destroy;
@@ -86,10 +95,9 @@ begin
   k := sha512OfBytes(seed,2);
   setLength(k, crypter.KeySize div 8);
   crypter.Key := k;
-  k := copy(sha512OfBytes(k),1,crypter.BlockSize div 8);
+  k := copy(sha512OfBytes(ReverseBitsOfBytes(k)),1,crypter.BlockSize div 8);
   crypter.IV := k;
 end;
-
 
 initialization
   {$if defined(DEBUG)}

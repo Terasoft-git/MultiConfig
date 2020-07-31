@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Terasoft_git.Framework.Lock,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls,
+  Vcl.ExtCtrls;
 
 type
   TfrmTest = class(TForm)
@@ -15,9 +16,15 @@ type
     BitBtn2: TBitBtn;
     mm: TMemo;
     BitBtn3: TBitBtn;
+    editSeed: TLabeledEdit;
+    editTextToEncrypt: TLabeledEdit;
+    editEncrypted: TLabeledEdit;
+    BitBtn4: TBitBtn;
     procedure BitBtn1Click(Sender: TObject);
     procedure BitBtn2Click(Sender: TObject);
     procedure BitBtn3Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure BitBtn4Click(Sender: TObject);
   private
     lock1, lock2: ILock;
     { Private declarations }
@@ -79,22 +86,36 @@ end;
 
 procedure TfrmTest.BitBtn3Click(Sender: TObject);
   var
-    key1, key2: TBytes;
     s: String;
 begin
-  key1 := BytesOf('Test it.');
-  s :=   StringOf(key1);
-  mm.Lines.Add(format('Original Text: %s', [s]));
-  s := bytesToHexString(key1);
-  s := bytesToBase64String(globalCrypter.encryptString('Test it.'),false);
-  mm.Lines.Add(format('Base64 of Encrypted Text: %s', [s]));
-  key1 := globalCrypter.encryptBytes(key1);
-  mm.Lines.Add(format('Encrypted Text: %s', [stringOf(key1)]));
-  key2 := base64StringToBytes(s);
-  key1 := globalCrypter.decryptBytes(key2);
-  s := StringOf(key1);
-  mm.Lines.Add(format('Decrypted Text: %s', [s]));
+  globalCrypter.setSeed(BytesOf(editSeed.Text));
 
+  s := bytesToBase64String(globalCrypter.encryptString(editTextToEncrypt.Text));
+  mm.Lines.Add(format('Encrypted Text: %s', [s]));
+  editEncrypted.Text := s;
+
+end;
+
+procedure TfrmTest.BitBtn4Click(Sender: TObject);
+  var
+    b: TBytes;
+    s: String;
+begin
+  if(editEncrypted.Text='') then
+    ShowError('There is not text to decrypt!');
+
+  b := base64StringToBytes(editEncrypted.Text);
+  globalCrypter.setSeed(bytesOf(editSeed.Text));
+  b := globalCrypter.decryptBytes(b);
+  s := StringOf(b);
+  editTextToEncrypt.Text := s;
+  mm.Lines.Add(format('Decrypted Text: %s', [s]));
+end;
+
+procedure TfrmTest.FormCreate(Sender: TObject);
+begin
+  editSeed.Text := 'This is a test seed!!!';
+  editTextToEncrypt.Text := 'This is a text to encrypt!!!';
 end;
 
 end.
