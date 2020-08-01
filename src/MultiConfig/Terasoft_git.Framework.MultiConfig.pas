@@ -504,7 +504,7 @@ function TMultiConfig.translate(const text: WideStringFramework; const initMark:
     endTag: String;
 
   const
-    ___CONST_DefaultSection = 'variables';
+    ___CONST_DefaultSection = 'vars';
     ___CONST_initTag = '%%(';
     ___CONST_endTag    = ')%%';
 

@@ -7,29 +7,32 @@ object frmTest: TfrmTest
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'Tahoma'
+  Font.Height = -13
+  Font.Name = 'Verdana'
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 16
   object PageControl1: TPageControl
     Left = 0
     Top = 0
     Width = 866
     Height = 593
-    ActivePage = TabSheet4
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Tests'
+      ExplicitTop = 24
+      ExplicitHeight = 565
       object BitBtn1: TBitBtn
         Left = 16
         Top = 24
-        Width = 75
+        Width = 106
         Height = 25
         Caption = 'Test LOCK'
         TabOrder = 0
@@ -38,7 +41,7 @@ object frmTest: TfrmTest
       object BitBtn2: TBitBtn
         Left = 128
         Top = 24
-        Width = 75
+        Width = 106
         Height = 25
         Caption = 'Test LRTimer'
         TabOrder = 1
@@ -48,11 +51,18 @@ object frmTest: TfrmTest
         Left = 0
         Top = 208
         Width = 858
-        Height = 357
+        Height = 354
         Align = alBottom
         Anchors = [akLeft, akTop, akRight, akBottom]
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Verdana'
+        Font.Style = []
         Lines.Strings = (
           'mm')
+        ParentFont = False
+        ScrollBars = ssBoth
         TabOrder = 2
       end
       object BitBtn3: TBitBtn
@@ -68,9 +78,9 @@ object frmTest: TfrmTest
         Left = 16
         Top = 72
         Width = 633
-        Height = 21
-        EditLabel.Width = 24
-        EditLabel.Height = 13
+        Height = 24
+        EditLabel.Width = 33
+        EditLabel.Height = 16
         EditLabel.Caption = 'Seed'
         TabOrder = 4
       end
@@ -78,9 +88,9 @@ object frmTest: TfrmTest
         Left = 16
         Top = 128
         Width = 633
-        Height = 21
-        EditLabel.Width = 75
-        EditLabel.Height = 13
+        Height = 24
+        EditLabel.Width = 105
+        EditLabel.Height = 16
         EditLabel.Caption = 'Text to Encrypt'
         TabOrder = 5
       end
@@ -88,9 +98,9 @@ object frmTest: TfrmTest
         Left = 16
         Top = 168
         Width = 633
-        Height = 21
-        EditLabel.Width = 74
-        EditLabel.Height = 13
+        Height = 24
+        EditLabel.Width = 102
+        EditLabel.Height = 16
         EditLabel.Caption = 'Encrypted Text'
         TabOrder = 6
       end
@@ -106,7 +116,7 @@ object frmTest: TfrmTest
       object BitBtn5: TBitBtn
         Left = 240
         Top = 24
-        Width = 75
+        Width = 121
         Height = 25
         Caption = 'Test MultiCfg'
         TabOrder = 8
@@ -116,52 +126,73 @@ object frmTest: TfrmTest
     object TabSheet2: TTabSheet
       Caption = 'Values 1'
       ImageIndex = 1
+      ExplicitTop = 24
+      ExplicitHeight = 565
       object Memo1: TMemo
         Left = 0
         Top = 0
         Width = 858
-        Height = 565
+        Height = 562
         Align = alClient
         Lines.Strings = (
           'Memo1')
         ScrollBars = ssBoth
         TabOrder = 0
+        ExplicitHeight = 565
       end
     end
     object TabSheet3: TTabSheet
       Caption = 'Values 2'
       ImageIndex = 2
+      ExplicitTop = 24
+      ExplicitHeight = 565
       object Memo2: TMemo
         Left = 0
         Top = 0
         Width = 858
-        Height = 565
+        Height = 562
         Align = alClient
         Lines.Strings = (
           
-            'sVhDRqKz6AIWhajZbMx12C6J7aoo1I6SR9iu8CVaQZaGVe+nzEBGfgyQ5El+/zcO' +
-            'pMbXlXnyUEye'
-          'TvSnQX62mnnFxC8ff5Xfu1IYOLMzmS9uW0/07hv7i5dlWfO3VnNSIvmcuqcDPqc=')
+            'ZKvMN3zILqRSA8Ctu+w5fbyckgp99BBZ+hzvU++ejF30hOHrxQPJkduZVH4VthDQ' +
+            'pUqfHeicVZXr'
+          
+            'o4bgz7VhQbpj1jaQtwiGlZoGExwhC7IfqnhKz9TS6Isszf2WU3WDKs+h1vOdjpJj' +
+            'HKdAP1P/VF+3'
+          
+            'Tb1jjC6161yBLKgXmdlpBEGTjAw7B6i7sum2CtnPIExmAnKghiQvKj52OF7u7Imw' +
+            '9UjbgqvvDc2o'
+          'nfEPsG2hfEKR6NBDcoSETtKMyLTy')
         ScrollBars = ssBoth
         TabOrder = 0
+        ExplicitHeight = 565
       end
     end
     object TabSheet4: TTabSheet
       Caption = 'Values 3'
       ImageIndex = 3
+      ExplicitTop = 24
+      ExplicitHeight = 565
       object Memo3: TMemo
         Left = 0
         Top = 0
         Width = 858
-        Height = 565
+        Height = 562
         Align = alClient
         Lines.Strings = (
           
-            '+xlwPV96vWMRam+heHMn7gk+TrMRlrfURTtzVo/Lh14GtEZmHHK2D0Zb029YbQYS' +
-            'R+TuFTPLB2Wm'
-          'kqE+DLIQ8WF0zLroj0PhVqZzYgkhBvc=')
+            'ZKvMN3zILqRSA8Ctu+w5fbyckgp99BBZ+hzvU++ejF30hOHrxQPJkduZVH4VthDQ' +
+            'pUqfHeicVZXr'
+          
+            'o4bgz7VhQbpj1jaQtwiGlZoGExwhC7IfqnhKz9TS6Isszf2WU3WDKs+h1vOdjpJj' +
+            'HKdAP1P/VF+3'
+          
+            'Tb1jjC6161yBLKgXmdlpBEGTjAw7B6i7sum2CtnPIExmAnKghiQvKj52OF7u7Imw' +
+            '9UjbgqvvDc2o'
+          'nfEPsG2hfEKR6NBDcoSETtKMyLTy')
         ScrollBars = ssBoth
         TabOrder = 0
+        ExplicitHeight = 565
       end
     end
   end

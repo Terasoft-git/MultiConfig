@@ -34,10 +34,11 @@ type
     procedure BitBtn4Click(Sender: TObject);
     procedure BitBtn5Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     multi: IMultiConfig;
     lock1, lock2: ILock;
-
+    procedure loadFile(fileName: String; strings: TStrings; load: boolean);
     { Private declarations }
   public
     { Public declarations }
@@ -127,7 +128,7 @@ end;
 procedure TfrmTest.BitBtn5Click(Sender: TObject);
   var
     ini: TMemIniFile;
-    reg: IConfigReaderWriter;
+    rw, reg: IConfigReaderWriter;
 begin
   mm.Lines.Clear;
   globalCrypter.setSeed(bytesOf(editSeed.Text));
@@ -140,7 +141,7 @@ begin
   //invert value too but crypted
   multi.WriteBool('value','test2',not multi.ReadBool('value','test2',true,true),true);
 
-  mm.Lines.Add(format('Last acess: %s', [ DateTimeToStr(multi.ReadDateTime('config','last',0,true))] ));
+  mm.Lines.Add(format('Last access: %s', [ DateTimeToStr(multi.ReadDateTime('config','last',0,true))] ));
   multi.WriteDateTime('config','last',Now,true);
 
   //Memo must have scroll bars on, or a long string may wrap and cause problems to key/value pair;
@@ -149,7 +150,9 @@ begin
   multi.addReaderWriter(reg);
 
   multi.addReaderWriter(createConfigIniStrings(Memo1.Lines,'Memo1',true,nil));
-  multi.addReaderWriter(createConfigIniStrings(Memo2.Lines,'Memo2',true,nil));
+  rw := createConfigIniStrings(Memo2.Lines,'Memo2');
+  multi.addReaderWriter(rw);
+  multi.WriteDateTime('config','app',now);
   multi.addReaderWriter(createConfigIniStrings(Memo3.Lines,'Memo3',true,nil));
 
   reg.writer.WriteString('in','value','test');
@@ -166,32 +169,54 @@ begin
   if multi.ReadString('test','value','', true)<> editTextToEncrypt.Text then
     ShowError('Value encryped is not equal!');
 
+  mm.Lines.Add(format('Value for vars.var04 no translation: %s', [ multi.ReadString('vars','var04','',false,false)]));
+  mm.Lines.Add(format('Value for vars.var04 translated: %s', [ multi.ReadString('vars','var04')]));
+
   mm.Lines.Add(StringofChar('=',30));
   mm.Lines.Add('Dump of all chain as one single ini file');
   mm.Lines.Add(StringofChar('=',30));
 
-  mm.Lines.Text := mm.Lines.Text + multi.toString;
+  mm.Lines.Text := mm.Lines.Text + multi.toString(false);
 
   mm.Lines.Add(StringofChar('=',30));
   mm.Lines.Add('Dump of all chain as one single ini file +- sources');
   mm.Lines.Add(StringofChar('=',30));
 
-  mm.Lines.Text := mm.Lines.Text + multi.toString(true,true);
+  mm.Lines.Text := mm.Lines.Text + multi.toString(false,true);
 
+end;
+
+procedure TfrmTest.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  loadFile('memo01.txt',Memo1.Lines,false);
+  loadFile('memo02.txt',Memo2.Lines,false);
+  loadFile('memo03.txt',Memo3.Lines,false);
 end;
 
 procedure TfrmTest.FormCreate(Sender: TObject);
 begin
-  editSeed.Text := 'This is a test seed!!!';
+  editSeed.Text := CRYPTO_DUMMY_SEED;
   editTextToEncrypt.Text := 'This is a text to encrypt!!!';
+end;
+
+procedure TfrmTest.loadFile(fileName: String; strings: TStrings; load: boolean);
+  var
+    s: String;
+begin
+  s := ExpandFileName(ExtractFilePath(ParamStr(0)) + '..\..\' + fileName);
+  if load then begin
+    if FileExists(s) then
+      strings.LoadFromFile(s);
+  end else
+    strings.SaveToFile(s);
 end;
 
 procedure TfrmTest.FormShow(Sender: TObject);
 begin
   TabSheet1.Show;
-  Memo1.Clear;
-  //Memo2.Clear;
-  //Memo3.Clear;
+  loadFile('memo01.txt',Memo1.Lines,true);
+  loadFile('memo02.txt',Memo2.Lines,true);
+  loadFile('memo03.txt',Memo3.Lines,true);
 end;
 
 end.

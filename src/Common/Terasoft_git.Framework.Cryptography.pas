@@ -4,6 +4,14 @@ interface
   uses
     Terasoft_git.Framework.Types, SysUtils;
 
+  const
+  {$if not defined(DEBUG)}
+    CRYPTO_DEFSALTLEN = 4;
+  {$else}
+      CRYPTO_DEFSALTLEN = 12;
+      CRYPTO_DUMMY_SEED = 'DUMMY KEY ALLERT!!! Just For initialization and test!!! Do not use this SEED!!!';
+  {$ifend}
+
   type
 
     //Simple interface for cryptografy
@@ -28,14 +36,6 @@ interface
 implementation
   uses
     Spring.Cryptography, Terasoft_git.Framework.Bytes;
-
-  const
-    DEFSALTLEN = 4;
-
-  {$if defined(DEBUG)}
-      DUMMY_SEED = 'DUMMY KEY ALLERT!!! Just For initialization and test!!! Do not use this SEED!!!';
-  {$ifend}
-
 
 
   type
@@ -84,7 +84,7 @@ end;
 constructor TCrypter.Create;
 begin
   inherited;
-  fSaltlen := DEFSALTLEN;
+  fSaltlen := CRYPTO_DEFSALTLEN;
   crypter := CreateTripleDES;
   crypter.CipherMode := TCipherMode.CBC;
 end;
@@ -111,7 +111,8 @@ end;
 function TCrypter.decryptBytes(const bytes: TBytes): TBytes;
 begin
   Result := crypter.Decrypt(bytes);
-  Result := Copy(Result, fSaltlen, MaxInt);
+  if(fSaltlen>0) then
+    Result := Copy(Result, fSaltlen, MaxInt);
 end;
 
 destructor TCrypter.Destroy;
@@ -141,7 +142,7 @@ end;
 
 initialization
   {$if defined(DEBUG)}
-    globalCrypter := createCrypter(bytesOf(DUMMY_SEED));
+    globalCrypter := createCrypter(bytesOf(CRYPTO_DUMMY_SEED));
   {$ifend}
 
 

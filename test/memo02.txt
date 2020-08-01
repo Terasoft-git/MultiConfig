@@ -1,0 +1,9 @@
+[config]
+app=01/08/2020 16:53:34
+
+[vars]
+var01=Value for vars.var01
+var02=Value for vars.var02
+var03=Value for vars.var03
+var04=Value 01: %%(vars.var01)%% - Value 02: %%(vars.var02)%% - Value 03: %%(vars.var03)%% - %%(config.app)%%
+
