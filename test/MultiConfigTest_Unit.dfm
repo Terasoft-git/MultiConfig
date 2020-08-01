@@ -46,10 +46,11 @@ object frmTest: TfrmTest
       end
       object mm: TMemo
         Left = 0
-        Top = 296
+        Top = 208
         Width = 858
-        Height = 269
+        Height = 357
         Align = alBottom
+        Anchors = [akLeft, akTop, akRight, akBottom]
         Lines.Strings = (
           'mm')
         TabOrder = 2

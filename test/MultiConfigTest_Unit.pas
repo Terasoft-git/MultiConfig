@@ -127,20 +127,33 @@ end;
 procedure TfrmTest.BitBtn5Click(Sender: TObject);
   var
     ini: TMemIniFile;
+    reg: IConfigReaderWriter;
 begin
   mm.Lines.Clear;
   globalCrypter.setSeed(bytesOf(editSeed.Text));
   //We provided some comand lines too;
+  //Default is to read from cmdlines, envvars and ini from exe.ini
   multi := defaultMultiConfigIniFile(true);
-  multi := createMultiConfig;
-  multi.addReaderWriter(createConfigIniFile(MULTICONFIG_DEFAULTINIFILE,'',true));
-  multi.WriteBool('value','test',true);
+  //invert value
+  multi.WriteBool('value','test',not multi.ReadBool('value','test',true));
 
-  //Memo must have scrools bars on, or a long string may wrap and cause problems;
+  //invert value too but crypted
+  multi.WriteBool('value','test2',not multi.ReadBool('value','test2',true,true),true);
+
+  mm.Lines.Add(format('Last acess: %s', [ DateTimeToStr(multi.ReadDateTime('config','last',0,true))] ));
+  multi.WriteDateTime('config','last',Now,true);
+
+  //Memo must have scroll bars on, or a long string may wrap and cause problems to key/value pair;
+
+  reg := createConfigRegistry('\MyApp\MyTest');
+  multi.addReaderWriter(reg);
 
   multi.addReaderWriter(createConfigIniStrings(Memo1.Lines,'Memo1',true,nil));
   multi.addReaderWriter(createConfigIniStrings(Memo2.Lines,'Memo2',true,nil));
   multi.addReaderWriter(createConfigIniStrings(Memo3.Lines,'Memo3',true,nil));
+
+  reg.writer.WriteString('in','value','test');
+
   multi.WriteBool('value','test',false);
   multi.WriteBool('value','test def',true);
 
@@ -149,13 +162,18 @@ begin
   if multi.ReadString('test','value','', true)<> editTextToEncrypt.Text then
     ShowError('Value encryped is not equal!');
 
-  ini := TMemIniFile.Create('');
-  try
-    multi.populateIni(ini);
-    ini.GetStrings(mm.Lines);
-  finally
-    ini.Free;
-  end;
+  mm.Lines.Add(StringofChar('=',30));
+  mm.Lines.Add('Dump of all chain as one single ini file');
+  mm.Lines.Add(StringofChar('=',30));
+
+  mm.Lines.Text := mm.Lines.Text + multi.toString;
+
+  mm.Lines.Add(StringofChar('=',30));
+  mm.Lines.Add('Dump of all chain as one single ini file +- sources');
+  mm.Lines.Add(StringofChar('=',30));
+
+  mm.Lines.Text := mm.Lines.Text + multi.toString(true,true);
+
 end;
 
 procedure TfrmTest.FormCreate(Sender: TObject);
