@@ -138,7 +138,10 @@ object frmTest: TfrmTest
         Height = 565
         Align = alClient
         Lines.Strings = (
-          'Memo2')
+          
+            'sVhDRqKz6AIWhajZbMx12C6J7aoo1I6SR9iu8CVaQZaGVe+nzEBGfgyQ5El+/zcO' +
+            'pMbXlXnyUEye'
+          'TvSnQX62mnnFxC8ff5Xfu1IYOLMzmS9uW0/07hv7i5dlWfO3VnNSIvmcuqcDPqc=')
         ScrollBars = ssBoth
         TabOrder = 0
       end
@@ -154,9 +157,9 @@ object frmTest: TfrmTest
         Align = alClient
         Lines.Strings = (
           
-            'sVhDRqKz6AIWhajZbMx12C6J7aoo1I6SR9iu8CVaQZaGVe+nzEBGfgyQ5El+/zcO' +
-            'pMbXlXnyUEye'
-          'TvSnQX62mnnFxC8ff5Xfu1IYOLMzmS9uW0/07hv7i5dlWfO3VnNSIvmcuqcDPqc=')
+            '+xlwPV96vWMRam+heHMn7gk+TrMRlrfURTtzVo/Lh14GtEZmHHK2D0Zb029YbQYS' +
+            'R+TuFTPLB2Wm'
+          'kqE+DLIQ8WF0zLroj0PhVqZzYgkhBvc=')
         ScrollBars = ssBoth
         TabOrder = 0
       end

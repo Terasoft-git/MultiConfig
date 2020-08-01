@@ -157,7 +157,11 @@ begin
   multi.WriteBool('value','test',false);
   multi.WriteBool('value','test def',true);
 
+  // This must go memo2
   multi.WriteString('test','value',editTextToEncrypt.Text, true);
+
+  // This must go memo3
+  multi.WriteString('test','value2',editTextToEncrypt.Text, true);
 
   if multi.ReadString('test','value','', true)<> editTextToEncrypt.Text then
     ShowError('Value encryped is not equal!');
@@ -186,7 +190,7 @@ procedure TfrmTest.FormShow(Sender: TObject);
 begin
   TabSheet1.Show;
   Memo1.Clear;
-  Memo2.Clear;
+  //Memo2.Clear;
   //Memo3.Clear;
 end;
 
