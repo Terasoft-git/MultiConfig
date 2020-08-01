@@ -23,7 +23,13 @@ interface
       function ReadInteger(const Section, Ident: WideStringFramework; const Default: Integer = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): Integer;
       procedure populateIni(ini: TCustomIniFile; translate: boolean = true; printSource: boolean = false);
       function printSource(list: TListSource=nil): TListSource;
+      function getCrypted: boolean;
+      procedure setCrypted(const value: boolean);
+      function getCrypter: ICryptografy;
+      procedure setCrypter(const value: ICryptografy);
       function getSource: WideStringFramework;
+      property crypter: ICryptografy read getCrypter write setCrypter;
+      property crypted: boolean read getCrypted write setCrypted;
     end;
 
     IConfigWriter = interface
@@ -85,25 +91,26 @@ interface
       function valueExists(const Section, Ident: WideStringFramework): boolean;
 
       function printSource(list: TListSource=nil): TListSource;
+      function getReaderWriterAt(const index: Integer): IConfigReaderWriter;
+      function getReaderAt(const index: Integer): IConfigReader;
+      function getWriterAt(const index: Integer): IConfigWriter;
 
       property multiReader: IConfigReader read getMultiReader;
       property multiWriter: IConfigWriter read getMultiWriter;
 
     end;
 
-  function defaultMultiConfigIniFile: IMultiConfig;
+  function defaultMultiConfigIniFile(crypted: boolean = false; crypter: ICryptografy = nil): IMultiConfig;
 
   function createMultiConfig: IMultiConfig;
-  function createConfigIniFile(const filename: String; const hint: String = ''): IConfigReaderWriter;
-  function createConfigIniString(const str: String=''; const hint: String = ''): IConfigReaderWriter;
-  function createConfigIniStrings(const strings: TStrings = nil; const hint: String = ''): IConfigReaderWriter;
-  function createConfigRegistry(const path: String = ''; rootkey: HKEY = 0; const hint: String = ''): IConfigReaderWriter;
-  function createConfigCmdLine(const prefix: String = ''; const hint: String = ''): IConfigReaderWriter;
-  function createConfigEnvVar(const prefix: String = ''; const hint: String = ''): IConfigReaderWriter;
+  function createConfigIniFile(const filename: String = MULTICONFIG_DEFAULTINIFILE; const hint: String = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter;
+  function createConfigIniString(const str: String=''; const hint: String = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter;
+  function createConfigIniStrings(const strings: TStrings = nil; const hint: String = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter;
+  function createConfigRegistry(const path: String = ''; rootkey: HKEY = 0; const hint: String = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter;
+  function createConfigCmdLine(const prefix: String = ''; const hint: String = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter;
+  function createConfigEnvVar(const prefix: String = ''; const hint: String = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter;
 
   function checkListSource(var list: TListSource): TListSource;
-
-
 
 
 implementation
@@ -150,6 +157,14 @@ implementation
       function valueExists(const Section, Ident: WideStringFramework): boolean;
       function getSource: WideStringFramework;
       function printSource(list: TListSource=nil): TListSource;
+      function getCrypter: ICryptografy;
+      procedure setCrypter(const value: ICryptografy);
+      function getCrypted: boolean;
+      procedure setCrypted(const value: boolean);
+
+      function getReaderWriterAt(const index: Integer): IConfigReaderWriter;
+      function getReaderAt(const index: Integer): IConfigReader;
+      function getWriterAt(const index: Integer): IConfigWriter;
 
     public
       constructor Create;
@@ -164,40 +179,40 @@ begin
   Result := TMultiConfig.Create;
 end;
 
-function createConfigIniFile(const filename: String; const hint: String = ''): IConfigReaderWriter;
+function createConfigIniFile(const filename: String; const hint: String; crypted: boolean; crypter: ICryptografy): IConfigReaderWriter;
 begin
-  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigIniFile(filename,hint);
+  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigIniFile(filename,hint,crypted,crypter);
 end;
 
-function defaultMultiConfigIniFile: IMultiConfig;
+function defaultMultiConfigIniFile(crypted: boolean; crypter: ICryptografy): IMultiConfig;
 begin
   //adds cmd line parameters + envvars + exe.ini
-  Result := createMultiConfig.addReaderWriter(createConfigCmdLine).addReaderWriter(createConfigEnvVar).addReaderWriter(createConfigIniFile(ChangeFileExt(paramStr(0),'.ini')));
+  Result := createMultiConfig.addReaderWriter(createConfigCmdLine('',''{,crypted,crypter})).addReaderWriter(createConfigEnvVar('',''{,crypted,crypter})).addReaderWriter(createConfigIniFile(ChangeFileExt(paramStr(0),'.ini'),'',crypted,crypter));
 end;
 
-function createConfigIniString(const str: String=''; const hint: String = ''): IConfigReaderWriter;
+function createConfigIniString(const str: String; const hint: String; crypted: boolean; crypter: ICryptografy): IConfigReaderWriter;
 begin
-  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigIniString(str,hint);
+  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigIniString(str,hint,crypted,crypter);
 end;
 
-function createConfigIniStrings(const strings: TStrings = nil; const hint: String = ''): IConfigReaderWriter;
+function createConfigIniStrings(const strings: TStrings; const hint: String; crypted: boolean; crypter: ICryptografy): IConfigReaderWriter;
 begin
-  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigIniStrings(strings, hint);
+  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigIniStrings(strings, hint,crypted,crypter);
 end;
 
-function createConfigRegistry(const path: String = ''; rootkey: HKEY = 0; const hint: String = ''): IConfigReaderWriter;
+function createConfigRegistry(const path: String; rootkey: HKEY; const hint: String; crypted: boolean; crypter: ICryptografy): IConfigReaderWriter;
 begin
-  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigRegistry(path,rootkey,hint);
+  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigRegistry(path,rootkey,hint,crypted,crypter);
 end;
 
-function createConfigCmdLine(const prefix: String = ''; const hint: String = ''): IConfigReaderWriter;
+function createConfigCmdLine(const prefix: String; const hint: String; crypted: boolean; crypter: ICryptografy): IConfigReaderWriter;
 begin
-  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigCmdLine(prefix,hint);
+  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigCmdLine(prefix,hint,crypted,crypter);
 end;
 
-function createConfigEnvVar(const prefix: String = ''; const hint: String = ''): IConfigReaderWriter;
+function createConfigEnvVar(const prefix: String; const hint: String; crypted: boolean; crypter: ICryptografy): IConfigReaderWriter;
 begin
-  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigEnvVar(prefix,hint);
+  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigEnvVar(prefix,hint,crypted,crypter);
 end;
 
 { TMultiConfig }
@@ -263,6 +278,17 @@ begin
   end;
 end;
 
+function TMultiConfig.getCrypted: boolean;
+begin
+  Result := false;
+end;
+
+function TMultiConfig.getCrypter: ICryptografy;
+begin
+  //We do not have it..,
+  Result := nil;
+end;
+
 function TMultiConfig.getDefaultReaderWriter: IConfigReaderWriter;
 begin
   Result := fDefaultReaderWriter;
@@ -276,6 +302,23 @@ end;
 function TMultiConfig.getMultiWriter: IConfigWriter;
 begin
   Result := self;
+end;
+
+function TMultiConfig.getReaderAt(const index: Integer): IConfigReader;
+begin
+  Result := getReaderWriterAt(index).reader;
+end;
+
+function TMultiConfig.getReaderWriterAt(const index: Integer): IConfigReaderWriter;
+begin
+  if(index<0) or (index=length(fList)) then
+    raise Exception.CreateFmt('TMultiConfig.getReaderWriterAt: index out of range: %d', [ index ]);
+  Result := fList[index];
+end;
+
+function TMultiConfig.getWriterAt(const index: Integer): IConfigWriter;
+begin
+  Result := getReaderWriterAt(index).writer;
 end;
 
 function TMultiConfig.getSource: WideStringFramework;
@@ -406,6 +449,16 @@ begin
   end;
   if(translate) then
     Result:=self.translate(Result);
+end;
+
+procedure TMultiConfig.setCrypted(const value: boolean);
+begin
+  raise Exception.Create('TMultiConfig.setCrypter: We do not use crypter here...');
+end;
+
+procedure TMultiConfig.setCrypter(const value: ICryptografy);
+begin
+  raise Exception.Create('TMultiConfig.setCrypter: We do not use crypter here...');
 end;
 
 procedure TMultiConfig.setDefaultReaderWriter(const value: IConfigReaderWriter);

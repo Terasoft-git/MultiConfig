@@ -13,6 +13,7 @@ object frmTest: TfrmTest
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object PageControl1: TPageControl
@@ -20,7 +21,7 @@ object frmTest: TfrmTest
     Top = 0
     Width = 866
     Height = 593
-    ActivePage = TabSheet4
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet

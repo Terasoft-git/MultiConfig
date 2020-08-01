@@ -33,6 +33,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure BitBtn4Click(Sender: TObject);
     procedure BitBtn5Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     multi: IMultiConfig;
     lock1, lock2: ILock;
@@ -130,14 +131,16 @@ begin
   mm.Lines.Clear;
   globalCrypter.setSeed(bytesOf(editSeed.Text));
   //We provided some comand lines too;
-  multi := defaultMultiConfigIniFile;
+  multi := defaultMultiConfigIniFile(true);
+  multi := createMultiConfig;
+  multi.addReaderWriter(createConfigIniFile(MULTICONFIG_DEFAULTINIFILE,'',true));
   multi.WriteBool('value','test',true);
 
   //Memo must have scrools bars on, or a long string may wrap and cause problems;
 
-  multi.addReaderWriter(createConfigIniStrings(Memo1.Lines,'Memo1'));
-  multi.addReaderWriter(createConfigIniStrings(Memo2.Lines,'Memo2'));
-  multi.addReaderWriter(createConfigIniStrings(Memo3.Lines,'Memo3'));
+  multi.addReaderWriter(createConfigIniStrings(Memo1.Lines,'Memo1',true,nil));
+  multi.addReaderWriter(createConfigIniStrings(Memo2.Lines,'Memo2',true,nil));
+  multi.addReaderWriter(createConfigIniStrings(Memo3.Lines,'Memo3',true,nil));
   multi.WriteBool('value','test',false);
   multi.WriteBool('value','test def',true);
 
@@ -159,6 +162,14 @@ procedure TfrmTest.FormCreate(Sender: TObject);
 begin
   editSeed.Text := 'This is a test seed!!!';
   editTextToEncrypt.Text := 'This is a text to encrypt!!!';
+end;
+
+procedure TfrmTest.FormShow(Sender: TObject);
+begin
+  TabSheet1.Show;
+  Memo1.Clear;
+  Memo2.Clear;
+  Memo3.Clear;
 end;
 
 end.
