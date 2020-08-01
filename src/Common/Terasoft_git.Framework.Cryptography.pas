@@ -10,10 +10,8 @@ interface
     ICryptografy = interface
     ['{AE572F47-B1C4-4725-83B1-34E50211632F}']
       function encryptString(const str: WideStringFramework): TBytes;
-      function encryptStringToBase64(const str: WideStringFramework; wrapLines: boolean = false): WideStringFramework;
       function encryptBytes(const bytes: TBytes): TBytes;
       function decryptBytes(const bytes: TBytes): TBytes;
-      function decryptBase64ToString(const base64: WideStringFramework): WideString;
       procedure setSeed(const seed: TBytes);
       procedure setSaltLen(const value: Integer);
       function getSaltlen: Integer;
@@ -24,6 +22,8 @@ interface
     globalCrypter: ICryptografy;
 
   function createCrypter(const seed: TBytes): ICryptografy;
+  function encryptStringToBase64(const str: String; wrapLines: boolean = false; crypter: ICryptografy = nil; padding: Char = '='): String;
+  function decryptBase64ToString(const base64: String; decrypter: ICryptografy = nil; padding: Char = '='): String;
 
 implementation
   uses
@@ -44,9 +44,7 @@ implementation
     protected
       fSaltlen: Integer;
       crypter: ITripleDES;
-      function decryptBase64ToString(const base64: WideStringFramework): WideString;
       function encryptString(const str: WideStringFramework): TBytes;
-      function encryptStringToBase64(const str: WideStringFramework; wrapLines: boolean = false): WideStringFramework;
       function encryptBytes(const bytes: TBytes): TBytes;
       function decryptBytes(const bytes: TBytes): TBytes;
       procedure setSeed(const seed: TBytes);
@@ -57,6 +55,23 @@ implementation
       destructor Destroy; override;
     end;
 
+function encryptStringToBase64(const str: String; wrapLines: boolean = false; crypter: ICryptografy = nil; padding: Char = '='): String;
+begin
+  if(crypter=nil) then
+    crypter := globalCrypter;
+  if(crypter=nil) then
+    raise Exception.Create('encryptStringToBase64: Crypter not specified.');
+  Result := bytesToBase64String( crypter.encryptString(str), wrapLines, padding );
+end;
+
+function decryptBase64ToString(const base64: String; decrypter: ICryptografy = nil; padding: Char = '='): String;
+begin
+  if(decrypter=nil) then
+    decrypter := globalCrypter;
+  if(decrypter=nil) then
+    raise Exception.Create('encryptStringToBase64: Decrypter not specified.');
+  Result := StringOf(decrypter.decryptBytes(base64StringToBytes(base64,padding)));
+end;
 
 function createCrypter(const seed: TBytes): ICryptografy;
 begin
@@ -88,19 +103,9 @@ begin
   Result := encryptBytes(BytesOf(str));
 end;
 
-function TCrypter.encryptStringToBase64(const str: WideStringFramework; wrapLines: boolean = false): WideStringFramework;
-begin
-  raise Exception.Create('TCrypter.encryptStringToBase64: Not implemented yet!');
-end;
-
 function TCrypter.getSaltlen: Integer;
 begin
   Result := fSaltlen;
-end;
-
-function TCrypter.decryptBase64ToString(const base64: WideStringFramework): WideString;
-begin
-  raise Exception.Create('TCrypter.decryptBase64ToString: Not implemented yet!');
 end;
 
 function TCrypter.decryptBytes(const bytes: TBytes): TBytes;

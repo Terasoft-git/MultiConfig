@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Terasoft_git.Framework.Lock,
+  Terasoft_git.Framework.Lock, Terasoft_git.Framework.MultiConfig,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls,
   Vcl.ExtCtrls;
 
@@ -20,13 +20,23 @@ type
     editTextToEncrypt: TLabeledEdit;
     editEncrypted: TLabeledEdit;
     BitBtn4: TBitBtn;
+    BitBtn5: TBitBtn;
+    TabSheet2: TTabSheet;
+    TabSheet3: TTabSheet;
+    TabSheet4: TTabSheet;
+    Memo1: TMemo;
+    Memo2: TMemo;
+    Memo3: TMemo;
     procedure BitBtn1Click(Sender: TObject);
     procedure BitBtn2Click(Sender: TObject);
     procedure BitBtn3Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BitBtn4Click(Sender: TObject);
+    procedure BitBtn5Click(Sender: TObject);
   private
+    multi: IMultiConfig;
     lock1, lock2: ILock;
+
     { Private declarations }
   public
     { Public declarations }
@@ -41,8 +51,9 @@ implementation
 
   uses
     Terasoft_git.Framework.Lock.Files, Terasoft_git.Framework.VisualMessage,
-  Terasoft_git.Framework.Timer, Terasoft_git.Framework.Cryptography,
-  Terasoft_git.Framework.Bytes;
+    Terasoft_git.Framework.Timer, Terasoft_git.Framework.Cryptography,
+    IniFiles,
+    Terasoft_git.Framework.Bytes;
 
 procedure TfrmTest.BitBtn1Click(Sender: TObject);
   function lockIt(timeout: Integer = 2000): ILock;
@@ -110,6 +121,38 @@ begin
   s := StringOf(b);
   editTextToEncrypt.Text := s;
   mm.Lines.Add(format('Decrypted Text: %s', [s]));
+end;
+
+procedure TfrmTest.BitBtn5Click(Sender: TObject);
+  var
+    ini: TMemIniFile;
+begin
+  mm.Lines.Clear;
+  globalCrypter.setSeed(bytesOf(editSeed.Text));
+  //We provided some comand lines too;
+  multi := defaultMultiConfigIniFile;
+  multi.WriteBool('value','test',true);
+
+  //Memo must have scrools bars on, or a long string may wrap and cause problems;
+
+  multi.addReaderWriter(createConfigIniStrings(Memo1.Lines,'Memo1'));
+  multi.addReaderWriter(createConfigIniStrings(Memo2.Lines,'Memo2'));
+  multi.addReaderWriter(createConfigIniStrings(Memo3.Lines,'Memo3'));
+  multi.WriteBool('value','test',false);
+  multi.WriteBool('value','test def',true);
+
+  multi.WriteString('test','value',editTextToEncrypt.Text, true);
+
+  if multi.ReadString('test','value','', true)<> editTextToEncrypt.Text then
+    ShowError('Value encryped is not equal!');
+
+  ini := TMemIniFile.Create('');
+  try
+    multi.populateIni(ini);
+    ini.GetStrings(mm.Lines);
+  finally
+    ini.Free;
+  end;
 end;
 
 procedure TfrmTest.FormCreate(Sender: TObject);

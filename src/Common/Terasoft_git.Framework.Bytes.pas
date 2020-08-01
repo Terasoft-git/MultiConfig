@@ -8,12 +8,12 @@ interface
   function MD5OfBytes(const bytes: TBytes; count: Integer = 1): TBytes;
   function sha256OfBytes(const bytes: TBytes; count: Integer = 1): TBytes;
   function sha512OfBytes(const bytes: TBytes; count: Integer = 1): TBytes;
-  function base64StringToBytes( const str: String ): TBytes;
+  function base64StringToBytes( const str: String; padding: Char = '=' ): TBytes;
 
   //from bytes
   function bytesToHexString(const bytes: TBytes) : String;
   function hexStringToBytes(const hex : AnsiString): TBytes;
-  function bytesToBase64String( const bytes: TBytes; const wrapLines: boolean = true ): String;
+  function bytesToBase64String( const bytes: TBytes; const wrapLines: boolean = true; padding: Char = '=' ): String;
 
   //bytes to Bytes
   function reverseBytes(b: TBytes): TBytes;
@@ -107,18 +107,27 @@ begin
   end;
 end;
 
-function bytesToBase64String( const bytes: TBytes; const wrapLines: boolean = true ): String;
+function bytesToBase64String( const bytes: TBytes; const wrapLines: boolean = true; padding: Char = '=' ): String;
 begin
   Result := encodeBase64(bytes,length(bytes));
   if( not wrapLines ) then begin
     Result := StringReplace(Result,#13,'',[ rfReplaceAll ]);
     Result := StringReplace(Result,#10,'',[ rfReplaceAll ]);
   end;
+  if(padding<>'=') then
+    Result := StringReplace(Result, '=', padding, [ rfReplaceAll ]);
+
 end;
 
-function base64StringToBytes( const str: String ): TBytes;
+function base64StringToBytes( const str: String; padding: Char ): TBytes;
+  var
+    s: String;
 begin
-  Result := decodeBase64(str);
+  s := str;
+  if(padding<>'=') then
+    s := StringReplace(s,padding, '=', [ rfReplaceAll ]);
+
+  Result := decodeBase64(s);
 end;
 
 const

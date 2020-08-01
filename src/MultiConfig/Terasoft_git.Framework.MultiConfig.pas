@@ -3,7 +3,7 @@ unit Terasoft_git.Framework.MultiConfig;
 interface
   uses
     Classes, Terasoft_git.Framework.Types,Spring.Collections,
-    Terasoft_git.Framework.Cryptography,
+    Terasoft_git.Framework.Cryptography,Windows,
     Terasoft_git.Framework.Texts,IniFiles;
 
 
@@ -91,18 +91,24 @@ interface
 
     end;
 
+  function defaultMultiConfigIniFile: IMultiConfig;
+
   function createMultiConfig: IMultiConfig;
   function createConfigIniFile(const filename: String; const hint: String = ''): IConfigReaderWriter;
+  function createConfigIniString(const str: String=''; const hint: String = ''): IConfigReaderWriter;
+  function createConfigIniStrings(const strings: TStrings = nil; const hint: String = ''): IConfigReaderWriter;
+  function createConfigRegistry(const path: String = ''; rootkey: HKEY = 0; const hint: String = ''): IConfigReaderWriter;
+  function createConfigCmdLine(const prefix: String = ''; const hint: String = ''): IConfigReaderWriter;
+  function createConfigEnvVar(const prefix: String = ''; const hint: String = ''): IConfigReaderWriter;
 
   function checkListSource(var list: TListSource): TListSource;
 
 
-  function defaultMultiConfigIniFile: IMultiConfig;
 
 
 implementation
   uses
-    SysUtils, Math, StrUtils;
+    SysUtils, Math, StrUtils, Terasoft_git.Framework.MultiConfig.INI;
 
   type
     TMultiConfig = class(TInterfacedObject, IMultiConfig, IConfigReader, IConfigWriter)
@@ -160,14 +166,39 @@ end;
 
 function createConfigIniFile(const filename: String; const hint: String = ''): IConfigReaderWriter;
 begin
-
+  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigIniFile(filename,hint);
 end;
 
 function defaultMultiConfigIniFile: IMultiConfig;
 begin
-  Result := createMultiConfig.addReaderWriter(createConfigIniFile(ChangeFileExt(paramStr(0),'.ini')));
+  //adds cmd line parameters + envvars + exe.ini
+  Result := createMultiConfig.addReaderWriter(createConfigCmdLine).addReaderWriter(createConfigEnvVar).addReaderWriter(createConfigIniFile(ChangeFileExt(paramStr(0),'.ini')));
 end;
 
+function createConfigIniString(const str: String=''; const hint: String = ''): IConfigReaderWriter;
+begin
+  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigIniString(str,hint);
+end;
+
+function createConfigIniStrings(const strings: TStrings = nil; const hint: String = ''): IConfigReaderWriter;
+begin
+  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigIniStrings(strings, hint);
+end;
+
+function createConfigRegistry(const path: String = ''; rootkey: HKEY = 0; const hint: String = ''): IConfigReaderWriter;
+begin
+  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigRegistry(path,rootkey,hint);
+end;
+
+function createConfigCmdLine(const prefix: String = ''; const hint: String = ''): IConfigReaderWriter;
+begin
+  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigCmdLine(prefix,hint);
+end;
+
+function createConfigEnvVar(const prefix: String = ''; const hint: String = ''): IConfigReaderWriter;
+begin
+  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigEnvVar(prefix,hint);
+end;
 
 { TMultiConfig }
 

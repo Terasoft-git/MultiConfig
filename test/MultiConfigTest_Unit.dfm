@@ -20,7 +20,7 @@ object frmTest: TfrmTest
     Top = 0
     Width = 866
     Height = 593
-    ActivePage = TabSheet1
+    ActivePage = TabSheet4
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -100,6 +100,60 @@ object frmTest: TfrmTest
         Caption = 'Decrypt'
         TabOrder = 7
         OnClick = BitBtn4Click
+      end
+      object BitBtn5: TBitBtn
+        Left = 240
+        Top = 24
+        Width = 75
+        Height = 25
+        Caption = 'Test MultiCfg'
+        TabOrder = 8
+        OnClick = BitBtn5Click
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'Values 1'
+      ImageIndex = 1
+      object Memo1: TMemo
+        Left = 0
+        Top = 0
+        Width = 858
+        Height = 565
+        Align = alClient
+        Lines.Strings = (
+          'Memo1')
+        ScrollBars = ssBoth
+        TabOrder = 0
+      end
+    end
+    object TabSheet3: TTabSheet
+      Caption = 'Values 2'
+      ImageIndex = 2
+      object Memo2: TMemo
+        Left = 0
+        Top = 0
+        Width = 858
+        Height = 565
+        Align = alClient
+        Lines.Strings = (
+          'Memo2')
+        ScrollBars = ssBoth
+        TabOrder = 0
+      end
+    end
+    object TabSheet4: TTabSheet
+      Caption = 'Values 3'
+      ImageIndex = 3
+      object Memo3: TMemo
+        Left = 0
+        Top = 0
+        Width = 858
+        Height = 565
+        Align = alClient
+        Lines.Strings = (
+          'Memo3')
+        ScrollBars = ssBoth
+        TabOrder = 0
       end
     end
   end

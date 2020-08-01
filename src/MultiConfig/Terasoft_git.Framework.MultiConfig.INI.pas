@@ -2,20 +2,23 @@ unit Terasoft_git.Framework.MultiConfig.INI;
 
 interface
   uses
-    Terasoft_git.Framework.Types, Terasoft_git.Framework.MultiConfig, Windows;
+    Terasoft_git.Framework.Types, Classes, Terasoft_git.Framework.MultiConfig, Windows;
 
   function createConfigIniFile(const filename: String; const hint: String = ''): IConfigReaderWriter;
   function createConfigRegistry(const path: String = ''; rootkey: HKEY = 0; const hint: String = ''): IConfigReaderWriter;
   function createConfigIniString(const str: String; const hint: String = ''): IConfigReaderWriter;
-  function createConfigCmdLine(const hint: String = ''; const prefix: String = ''): IConfigReaderWriter;
+  function createConfigCmdLine(const prefix: String = ''; const hint: String = ''): IConfigReaderWriter;
   function createConfigEnvVar(const prefix: String = ''; const hint: String = ''): IConfigReaderWriter;
-
+  function createConfigIniStrings(const strings: TStrings = nil; const hint: String = ''): IConfigReaderWriter;
 
 implementation
   uses
-    iniFiles, StrUtils, SysUtils, Classes, Registry, Terasoft_git.Framework.Lock,
+    iniFiles, StrUtils, SysUtils, Registry, Terasoft_git.Framework.Lock,
     Terasoft_git.Framework.Cryptography,
     Terasoft_git.Framework.Texts;
+
+  const
+    PADDING = '=';
 
   type
     TIni = class(TInterfacedObject, IConfigReaderWriter, IConfigReader, IConfigWriter )
@@ -23,6 +26,7 @@ implementation
       inif: TCustomIniFile;
       lck: Ilock;
       fHint: String;
+      fStrings: TStrings;
       function getReader: IConfigReader;
       function getWriter: IConfigWriter;
       function ReadString(const Section, Ident: WideStringFramework; const default: WideStringFramework = ''; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): WideStringFramework;
@@ -34,8 +38,9 @@ implementation
       function getSource: WideStringFramework;
       function printSource(list: TListSource): TListSource;
       procedure updateIniFile;
+      procedure loadData;
     public
-      constructor Create(aInif: TCustomIniFile; const hint: String);
+      constructor Create(aInif: TCustomIniFile; const hint: String; strings: TStrings = nil);
       destructor Destroy; override;
     end;
 
@@ -50,6 +55,19 @@ begin
     fName := filename;
   fName := ExpandFileName(fName);
   Result := TIni.Create(TMemIniFile.Create(fName),hint);
+end;
+
+function createConfigIniStrings(const strings: TStrings = nil; const hint: String = ''): IConfigReaderWriter;
+  var
+    f: TMemIniFile;
+begin
+  if(strings=nil) then begin
+    Result := createConfigIniString('',hint);
+    exit;
+  end;
+  f := TMemIniFile.Create('');
+  f.SetStrings(strings);
+  Result := TIni.Create(f,hint,strings);
 end;
 
 function createConfigRegistry(const path: String = ''; rootkey: HKEY = 0; const hint: String = ''): IConfigReaderWriter;
@@ -160,7 +178,7 @@ begin
   end;
 end;
 
-function createConfigCmdLine(const hint: String = ''; const prefix: String = ''): IConfigReaderWriter;
+function createConfigCmdLine(const prefix: String = ''; const hint: String = ''): IConfigReaderWriter;
   var
     str: String;
     ini: TMemIniFile;
@@ -193,13 +211,20 @@ end;
 
 { TIni }
 
-constructor TIni.Create(aInif: TCustomIniFile; const hint: String);
+constructor TIni.Create(aInif: TCustomIniFile; const hint: String; strings: TStrings = nil);
 begin
   inherited Create;
+  fStrings := Strings;
   inif := aInif;
   fHint:=hint;
   if(ainif.FileName<>'') and (ainif is TMemIniFile) then
     lck := FileILock(inif.FileName + '.lock');
+end;
+
+procedure TIni.loadData;
+begin
+  if(fStrings<>nil) and (inif is TMemIniFile) then
+    TMemIniFile(inif).SetStrings(fStrings);
 end;
 
 procedure TIni.deleteKey(const Section, Ident: WideStringFramework);
@@ -208,7 +233,9 @@ procedure TIni.deleteKey(const Section, Ident: WideStringFramework);
     list: TStrings;
 begin
   if(lck<>nil)and (lck.lock<>ltExclusive) then
-    raise Exception.CreateFmt('TIni.deleteKey: Not acquired exclusive access to file [%s]', [ inif.FileName ] );
+    raise Exception.CreateFmt('TIni.deleteKey: Not acquired exclusive access to file [%s]', [ inif.FileName ] )
+  else
+    loadData;
   try
     if(inif.FileName<>'') and (inif is TMemIniFile) then
       (inif as TMemIniFile).Rename(inif.FileName,true);
@@ -290,7 +317,10 @@ begin
   end else
     ps := '';
   if(lck<>nil)and (lck.lock<>ltExclusive) then
-    raise Exception.CreateFmt('TIni.populateIni Not acquired exclusive access to file [%s]', [ inif.FileName ] );
+    raise Exception.CreateFmt('TIni.populateIni Not acquired exclusive access to file [%s]', [ inif.FileName ] )
+  else
+    loadData;
+
   try
     listSec := TStringList.Create;
     listIdent := TStringList.Create;
@@ -330,19 +360,15 @@ end;
 function TIni.ReadString(const Section, Ident, default: WideStringFramework; decrypt, translate: boolean; decrypter: ICryptografy): WideStringFramework;
 begin
   if(lck<>nil)and (lck.lock<>ltExclusive) then
-    raise Exception.CreateFmt('TIni.ReadString: Not acquired exclusive access to file [%s]', [ inif.FileName ] );
+    raise Exception.CreateFmt('TIni.ReadString: Not acquired exclusive access to file [%s]', [ inif.FileName ] )
+  else
+    loadData;
   try
     if(inif.FileName<>'') and (inif is TMemIniFile) then
       (inif as TMemIniFile).Rename(inif.FileName,true);
     Result := inif.ReadString(Section,Ident,Default);
-    if(decrypt) and (Result<>Default) then begin
-      if(decrypter=nil) then
-        decrypter := globalCrypter;
-      if(decrypter<>nil) then
-        Result := decrypter.decryptBase64ToString(Result)
-      else
-        raise Exception.Create('TIni.ReadString: Decrypter not defined');
-    end;
+    if(decrypt) and (Result<>Default) then
+      Result := decryptBase64ToString(Result,decrypter,PADDING);
   finally
     if(lck<>nil) then
       lck.releaseLock;
@@ -351,6 +377,11 @@ end;
 
 procedure TIni.updateIniFile;
 begin
+  if(fStrings<>nil) and (inif is TMemIniFile) then begin
+    fStrings.Clear;
+    TMemIniFile(inif).GetStrings(fStrings);
+  end;
+
   if(inif.FileName<>'') then begin
     try
       inif.UpdateFile;
@@ -376,16 +407,13 @@ procedure TIni.WriteString(const Section, Ident, value: WideStringFramework; cry
     localValue: String;
 begin
   if(crypt)then begin
-    if(crypter=nil) then
-      crypter := globalCrypter;
-    if(crypter<>nil) then
-      localValue := crypter.encryptStringToBase64(value,false)
-    else
-      raise Exception.Create('TIni.WriteString: crypter not defined');
+    localValue := encryptStringToBase64(value,false,crypter,PADDING)
   end else
     localValue := value;
   if(lck<>nil)and (lck.lock<>ltExclusive) then
-    raise Exception.CreateFmt('TIni.WriteString: Not acquired exclusive access to file [%s]', [ inif.FileName ] );
+    raise Exception.CreateFmt('TIni.WriteString: Not acquired exclusive access to file [%s]', [ inif.FileName ] )
+  else
+    loadData;
   try
     if(inif.FileName<>'') and (inif is TMemIniFile) then
       (inif as TMemIniFile).Rename(inif.FileName,true);
