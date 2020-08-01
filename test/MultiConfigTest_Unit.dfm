@@ -21,7 +21,7 @@ object frmTest: TfrmTest
     Top = 0
     Width = 866
     Height = 593
-    ActivePage = TabSheet1
+    ActivePage = TabSheet4
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -153,7 +153,10 @@ object frmTest: TfrmTest
         Height = 565
         Align = alClient
         Lines.Strings = (
-          'Memo3')
+          
+            'sVhDRqKz6AIWhajZbMx12C6J7aoo1I6SR9iu8CVaQZaGVe+nzEBGfgyQ5El+/zcO' +
+            'pMbXlXnyUEye'
+          'TvSnQX62mnnFxC8ff5Xfu1IYOLMzmS9uW0/07hv7i5dlWfO3VnNSIvmcuqcDPqc=')
         ScrollBars = ssBoth
         TabOrder = 0
       end

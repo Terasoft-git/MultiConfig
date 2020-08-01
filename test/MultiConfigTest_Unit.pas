@@ -187,7 +187,7 @@ begin
   TabSheet1.Show;
   Memo1.Clear;
   Memo2.Clear;
-  Memo3.Clear;
+  //Memo3.Clear;
 end;
 
 end.
