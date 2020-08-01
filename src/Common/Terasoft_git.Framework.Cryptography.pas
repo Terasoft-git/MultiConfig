@@ -43,7 +43,7 @@ implementation
     TCrypter=class(TInterfacedObject, ICryptografy)
     protected
       fSaltlen: Integer;
-      crypter: ITripleDES;
+      crypter: ISymmetricAlgorithm;
       function encryptString(const str: WideStringFramework): TBytes;
       function encryptBytes(const bytes: TBytes): TBytes;
       function decryptBytes(const bytes: TBytes): TBytes;
@@ -135,7 +135,7 @@ begin
   k := sha512OfBytes(seed,2);
   setLength(k, crypter.KeySize div 8);
   crypter.Key := k;
-  k := copy(sha512OfBytes(ReverseBitsOfBytes(k)),1,crypter.BlockSize div 8);
+  k := copy(sha512OfBytes(ReverseBitsOfBytes(k)),0,crypter.BlockSize div 8);
   crypter.IV := k;
 end;
 
