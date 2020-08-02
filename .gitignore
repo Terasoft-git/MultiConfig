@@ -68,5 +68,5 @@ __recovery/
 # Boss dependency manager vendor folder https://github.com/HashLoad/boss
 modules/
 *.teralock
-test/Win32/Debug/MultiConfigTest.ini
-test/Win64/Debug/MultiConfigTest.ini
+test/Win32
+test/Win64
