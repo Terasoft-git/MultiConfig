@@ -15,4 +15,7 @@ It takes the first source in the list, reads it section/value pair and if the va
 Spring4D Framework (git clone https://bitbucket.org/sglienke/spring4d.git) is used as Framework for Cryptografy and Lists handling.
 
 
+Tested in Delphi XE3 and Delphi XE5
+
+
 
