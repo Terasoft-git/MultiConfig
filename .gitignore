@@ -69,3 +69,4 @@ __recovery/
 modules/
 *.teralock
 test/Win32/Debug/MultiConfigTest.ini
+test/Win64/Debug/MultiConfigTest.ini
