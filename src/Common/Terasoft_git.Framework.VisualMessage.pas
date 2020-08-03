@@ -20,7 +20,7 @@ interface
 
 implementation
   uses
-    Windows, Forms, SysUtils;
+    Windows, VCL.Forms, SysUtils;
 
   type
     TKeyState=class(TInterfacedObject,IAsyncKeyState)
