@@ -43,8 +43,8 @@ implementation
     {$if defined(DXE_UP)}
 
       Spring.Cryptography,  
-      Terasoft_git.Framework.Bytes,
     {$ifend}
+    Terasoft_git.Framework.Bytes,
     Terasoft_git.Framework.Initializer.Iface;
 
 
@@ -100,11 +100,7 @@ begin
     Result := TCrypter.Create;
     Result.setSeed(seed);
  {$else}
-  {$if defined(DXE_UP)}
-    Result := createIfaceDllMultiCfg.createCrypter(bytesToHexString(seed));
-  {$else}
-    raise Exception.Create('createCrypter: Not implemented.');
-  {$ifend}
+   Result := createIfaceDllMultiCfg.createCrypter(bytesToHexString(seed));
  {$ifend}
 end;
 

@@ -14,20 +14,22 @@ interface
     function sha512OfBytes(const bytes: TBytes; count: Integer = 1): TBytes;
     function base64StringToBytes( const str: String; padding: Char = '=' ): TBytes;
 
-  //from bytes
-  function bytesToHexString(const bytes: TBytes) : String;
-  function hexStringToBytes(const hex : AnsiString): TBytes;
-  function bytesToBase64String( const bytes: TBytes; const wrapLines: boolean = true; padding: Char = '=' ): String;
+    //from bytes
+    function hexStringToBytes(const hex : AnsiString): TBytes;
+    function bytesToBase64String( const bytes: TBytes; const wrapLines: boolean = true; padding: Char = '=' ): String;
 
-  //bytes to Bytes
-  function reverseBytes(b: TBytes): TBytes;
+    //bytes to Bytes
+    function reverseBytes(b: TBytes): TBytes;
 
-  function ReverseBitsOfBytes(bytes: TBytes): TBytes;
+    function ReverseBitsOfBytes(bytes: TBytes): TBytes;
 
-  //Insecure random number generator from delphi lib, but sometimes good for non critical purposes...
-  function randomBytes(count: byte): TBytes;
+    //Insecure random number generator from delphi lib, but sometimes good for non critical purposes...
+    function randomBytes(count: byte): TBytes;
+  {$else}
+    function stringToBytes(const str: AnsiString): TBytes;
   {$ifend}
 
+  function bytesToHexString(const bytes: TBytes) : String;
   function concatBytes(const bytes: array of TBytes): TBytes;
   function ReverseBits(b: Byte): Byte;
 
@@ -71,16 +73,6 @@ begin
       Result := ComputeHash(Result);
     end;
 end;
-
-function bytesToHexString(const bytes: TBytes) : String;
-  var
-    i     : LongInt;
-begin
-  Result := '';
-  for i := 0 to Length(bytes) - 1 do
-    Result := Result + IntToHex(bytes[i], 2);
-end;
-{ -------------------------------------------------------------------------- }
 
 function hexStringToBytes(const hex : AnsiString): TBytes;
   var
@@ -161,6 +153,18 @@ begin
     CreateRandomNumberGenerator.GetBytes(Result);
 end;
 
+{$else}
+
+function stringToBytes(const str: AnsiString): TBytes;
+  var
+    i: Integer;
+begin
+  i := length(str);
+  SetLength(Result,i);
+  move(str[1],Result[0],i);
+end;
+
+
 {$ifend}
 
 function concatBytes(const bytes: array of TBytes): TBytes;
@@ -203,6 +207,15 @@ const
 function ReverseBits(b: Byte): Byte;
 begin
   Result := Table[b];
+end;
+
+function bytesToHexString(const bytes: TBytes) : String;
+  var
+    i     : LongInt;
+begin
+  Result := '';
+  for i := 0 to Length(bytes) - 1 do
+    Result := Result + IntToHex(bytes[i], 2);
 end;
 
 
