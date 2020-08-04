@@ -124,6 +124,10 @@ object frmTest: TfrmTest
     object TabSheet2: TTabSheet
       Caption = 'Values 1'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Memo1: TMemo
         Left = 0
         Top = 0
@@ -139,6 +143,10 @@ object frmTest: TfrmTest
     object TabSheet3: TTabSheet
       Caption = 'Values 2'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Memo2: TMemo
         Left = 0
         Top = 0
@@ -163,6 +171,10 @@ object frmTest: TfrmTest
     object TabSheet4: TTabSheet
       Caption = 'Values 3'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Memo3: TMemo
         Left = 0
         Top = 0

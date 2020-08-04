@@ -61,8 +61,27 @@ object Form1: TForm1
         Height = 21
         EditLabel.Width = 72
         EditLabel.Height = 13
-        EditLabel.Caption = 'Text to Encryot'
+        EditLabel.Caption = 'Text to Encrypt'
         TabOrder = 3
+      end
+      object editCrypted: TLabeledEdit
+        Left = 24
+        Top = 104
+        Width = 433
+        Height = 21
+        EditLabel.Width = 72
+        EditLabel.Height = 13
+        EditLabel.Caption = 'Text to Encryot'
+        TabOrder = 4
+      end
+      object Button2: TButton
+        Left = 472
+        Top = 104
+        Width = 75
+        Height = 25
+        Caption = 'Decrypt'
+        TabOrder = 5
+        OnClick = Button2Click
       end
     end
   end
