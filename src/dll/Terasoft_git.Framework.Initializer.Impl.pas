@@ -13,7 +13,8 @@ implementation
   uses
     Classes, Terasoft_git.Framework.MultiConfig,
     Terasoft_git.Framework.Cryptography, Windows,
-  Terasoft_git.Framework.Timer.LR;
+    Terasoft_git.Framework.Bytes,
+    Terasoft_git.Framework.Timer.LR;
 
   type
     TCreator = class(TInterfacedObject, IMultiCfgCreator)
@@ -26,7 +27,7 @@ implementation
       function createConfigCmdLine(const prefix: WideStringFramework = ''; const hint: WideStringFramework = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter; stdcall;
       function createConfigEnvVar(const prefix: WideStringFramework = ''; const hint: WideStringFramework = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter; stdcall;
 
-      function createCrypter(const seed: TBytes): ICryptografy;
+      function createCrypter(const hexSeed: WideStringFramework): ICryptografy; stdcall;
     public
       constructor Create;
     end;
@@ -70,9 +71,9 @@ begin
   Result := Terasoft_git.Framework.MultiConfig.createConfigRegistry(path,rootkey,hint,crypted,crypter);
 end;
 
-function TCreator.createCrypter(const seed: TBytes): ICryptografy;
+function TCreator.createCrypter(const hexSeed: WideStringFramework): ICryptografy;
 begin
-  Result := Terasoft_git.Framework.Cryptography.createCrypter(seed);
+  Result := Terasoft_git.Framework.Cryptography.createCrypter(hexStringToBytes(hexSeed));
 end;
 
 function TCreator.createMultiConfig: IMultiConfig;

@@ -7,10 +7,9 @@ interface
   uses
     Classes, Windows, SysUtils,
     Terasoft_git.Framework.Types,
-    Terasoft_git.Framework.Texts,
+    //Terasoft_git.Framework.Texts,
     Terasoft_git.Framework.Cryptography,
     Terasoft_git.Framework.MultiConfig;
-
   type
     IMultiCfgCreator = interface
     ['{3094D3DA-1C57-4382-9955-26AD573EE6CB}']
@@ -22,7 +21,7 @@ interface
       function createConfigCmdLine(const prefix: WideStringFramework = ''; const hint: WideStringFramework = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter; stdcall;
       function createConfigEnvVar(const prefix: WideStringFramework = ''; const hint: WideStringFramework = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter; stdcall;
 
-      function createCrypter(const seed: TBytes): ICryptografy;
+      function createCrypter(const hexSeed: WideStringFramework): ICryptografy;stdcall;
     end;
 
 

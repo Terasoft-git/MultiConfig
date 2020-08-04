@@ -9,7 +9,8 @@ interface
     {$if defined(DXE_UP)}
       Spring.Collections,
     {$ifend}
-    Terasoft_git.Framework.Cryptography,Windows,
+    Terasoft_git.Framework.Cryptography,
+    Windows,
     Terasoft_git.Framework.Texts,IniFiles;
 
 
@@ -19,7 +20,13 @@ interface
 
   type
 
-    TListSource = IList<WideStringFramework>;
+    TListSource =
+      {$if defined(DXE_UP)}
+        IList<WideStringFramework>
+      {$else}
+        IUnknown
+      {$ifend}
+      ;
 
     IMultiConfig = interface;
 

@@ -6,7 +6,7 @@
 {$i version.inc}
 
 {$if not defined(DXE_UP)}
-  {$if ! defined(__NO_MULTICFG_IMPL__)}
+  {$if not defined(__NO_MULTICFG_IMPL__)}
     {$define __NO_MULTICFG_IMPL__}
   {$ifend}
 {$ifend}    

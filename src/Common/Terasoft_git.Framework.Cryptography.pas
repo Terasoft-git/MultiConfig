@@ -39,10 +39,12 @@ interface
 implementation
 
   uses
-    {$if defined(__CRYPTO_IMPL__)}
-      Spring.Cryptography,
+    {$if defined(DXE_UP)}
+
+      Spring.Cryptography,  
+      Terasoft_git.Framework.Bytes,
     {$ifend}
-    Terasoft_git.Framework.Bytes, Terasoft_git.Framework.Initializer.Iface;
+    Terasoft_git.Framework.Initializer.Iface;
 
 
  {$if defined(__CRYPTO_IMPL__)}
@@ -70,7 +72,11 @@ begin
     crypter := globalCrypter;
   if(crypter=nil) then
     raise Exception.Create('encryptStringToBase64: Crypter not specified.');
-  Result := bytesToBase64String( crypter.encryptString(str), wrapLines, padding );
+  {$if defined(DXE_UP)}
+    Result := bytesToBase64String( crypter.encryptString(str), wrapLines, padding );
+  {$else}
+    raise Exception.Create('encryptStringToBase64: Not suported.');
+  {$ifend}
 end;
 
 function decryptBase64ToString(const base64: String; decrypter: ICryptografy = nil; padding: Char = '='): String;
@@ -79,7 +85,11 @@ begin
     decrypter := globalCrypter;
   if(decrypter=nil) then
     raise Exception.Create('encryptStringToBase64: Decrypter not specified.');
-  Result := StringOf(decrypter.decryptBytes(base64StringToBytes(base64,padding)));
+  {$if defined(DXE_UP)}
+    Result := StringOf(decrypter.decryptBytes(base64StringToBytes(base64,padding)));
+  {$else}
+    raise Exception.Create('decryptBase64ToString: Not suported.');
+  {$ifend}
 end;
 
 function createCrypter(const seed: TBytes): ICryptografy;
@@ -88,7 +98,11 @@ begin
     Result := TCrypter.Create;
     Result.setSeed(seed);
  {$else}
-    createIfaceDllMultiCfg.createCrypter(seed);
+  {$if defined(DXE_UP)}
+    Result := createIfaceDllMultiCfg.createCrypter(bytesToHexString(seed));
+  {$else}
+    raise Exception.Create('createCrypter: Not implemented.');
+  {$ifend}
  {$ifend}
 end;
 
