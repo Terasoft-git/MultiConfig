@@ -1,8 +1,11 @@
+
+{$i multicfg.inc}
+
 unit Terasoft_git.Framework.Initializer.Iface;
 
 interface
   uses
-    Classes, Windows,
+    Classes, Windows, SysUtils,
     Terasoft_git.Framework.Types,
     Terasoft_git.Framework.Texts,
     Terasoft_git.Framework.Cryptography,
@@ -18,8 +21,90 @@ interface
       function createConfigRegistry(const path: WideStringFramework = ''; rootkey: HKEY = 0; const hint: WideStringFramework = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter; stdcall;
       function createConfigCmdLine(const prefix: WideStringFramework = ''; const hint: WideStringFramework = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter; stdcall;
       function createConfigEnvVar(const prefix: WideStringFramework = ''; const hint: WideStringFramework = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter; stdcall;
+
+      function createCrypter(const seed: TBytes): ICryptografy;
     end;
 
+
+ {$if not defined(__CRYPTO_IMPL__)}
+
+
+    const
+      DLL_ORIGINAL_NAME = 'MultiCfgIface.dll';
+      {$if defined(CPUX64)}
+        DLL_ORIGINAL_DEBUG_NAME = '..\..\..\dll\Win64\Debug\MultiCfgIface.dll';
+        DLL_NAME = 'MultiCfgIface64.dll';
+      {$else}
+        DLL_ORIGINAL_DEBUG_NAME = '..\..\..\dll\Win32\Debug\MultiCfgIface.dll';
+        DLL_NAME = 'MultiCfgIface32.dll';
+      {$ifend}
+
+    var
+      multiCfgdll_iface: IMultiCfgCreator;
+
+    function createIfaceDllMultiCfg(const fileName: String = ''): IMultiCfgCreator;
+
+  {$ifend}
+
+
 implementation
+
+{$if not defined(__CRYPTO_IMPL__)}
+
+  type
+    TInitProc = function (): IMultiCfgCreator;
+
+
+  var
+    HandleApp: HMODULE = 0;
+
+
+function findFile(fName: String): String;
+begin
+  Result := fName;
+  {$if defined(DEBUG)}
+    if(Result = '') then
+      Result := DLL_ORIGINAL_DEBUG_NAME;
+      exit;
+  {$else}
+    if(Result = '') then
+      Result := DLL_NAME;
+    Result := ExpandFileName(Result);
+    if FileExists(Result) then exit;
+  {$ifend}
+end;
+
+function createIfaceDllMultiCfg(const fileName: String = ''): IMultiCfgCreator;
+  var
+    s: String;
+    proc: TInitProc;
+begin
+  Result := multiCfgdll_iface;
+  if(Result<>nil) then
+    exit;
+
+  s := fileName;
+
+  if(fileName='') or not FileExists(fileName) then
+    s := findFile(ExtractFileName(s));
+
+  if(s='') or not FileExists(s) then
+    raise Exception.Create('createIfaceDllMultiCfg: DLL not found');
+
+  HandleApp := LoadLibrary(PChar(s));
+  @proc := nil;
+  if(HandleApp<>0) then
+    @proc := GetProcAddress(HandleApp,'createMutiCfg');
+  if(@proc<>nil) then
+    multiCfgdll_iface := proc();
+
+  Result := multiCfgdll_iface;
+
+  if(Result = nil) then
+    raise Exception.Create('createIfaceDllMultiCfg: Could not initialize interface.');
+
+end;
+{$ifend}
+
 
 end.

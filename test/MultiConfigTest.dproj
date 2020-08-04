@@ -6,7 +6,7 @@
         <MainSource>MultiConfigTest.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Application</AppType>
     </PropertyGroup>
@@ -34,16 +34,22 @@
         <Cfg_1>true</Cfg_1>
         <Base>true</Base>
     </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win64)'!=''">
+        <Cfg_1_Win64>true</Cfg_1_Win64>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_2)'!=''">
         <Cfg_2>true</Cfg_2>
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <DCC_Define>ShareMM;$(DCC_Define)</DCC_Define>
+        <DCC_UnitSearchPath>..\src;..\src\MultiConfig;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_Define>ShareMM;__NO_MULTICFG_IMPL__;$(DCC_Define)</DCC_Define>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1046</VerInfo_Locale>
-        <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
         <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
@@ -55,6 +61,7 @@
         <DCC_K>false</DCC_K>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <Debugger_RunParams>config.data=15</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <DCC_UsePackage>CEF4Delphi;tmsdXE5;FireDACSqliteDriver;GMLib_DXE5_VCL;GMLib_DXE5_FMX;DBXSqliteDriver;ACBrDiversos;ACBrTCP;FireDACPgDriver;fmx;IndySystem;GMLib_DXE5;tmswizdXE5;frx19;vclib;inetdbbde;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;DataSnapServer;DataSnapProviderClient;DBXSybaseASEDriver;DbxCommonDriver;vclimg;DSPack_DXE5;dbxcds;tmsscriptervcl_xe5;DatasnapConnectorsFreePascal;MetropolisUILiveTile;ZipMaster192R_XE5;vcldb;vcldsnap;SynEdit_DR190;fmxFireDAC;QRD_RDXE5;DBXDb2Driver;QRDFIBPlus_DXE5;tmsscripter_xe5;GMLibEdit_DXE5;DBXOracleDriver;CustomIPTransport;vclribbon;ACBr_SPED;dsnap;IndyIPServer;ACBr_MDFe;fmxase;vcl;IndyCore;IndyIPCommon;CloudService;DBXMSSQLDriver;CodeSiteExpressPkg;FireDACIBDriver;ACBr_Boleto;ACBr_NFe2;FireDACDBXDriver;ACBr_Sintegra;Bll_Pacotes_XE5;inetdbxpress;webdsnap;frxe19;FireDACDb2Driver;REasyTEFDXE5;adortl;ExPack_DXE5;frxDB19;FireDACASADriver;ACBrOpenSSL;ACBr_PAF;vcldbx;FireDACODBCDriver;rtl;dbrtl;DbxClientDriver;ACBrSerial;FireDACCommon;VCLXDBGrid190;inetdb;DBXOdbcDriver;ACBr_CTe;vclFireDAC;xmlrtl;svnui;ibxpress;IndyProtocols;DBXMySQLDriver;FireDACCommonDriver;tmsxlsdXE5;vclactnband;soaprtl;bindengine;ACBrComum;QRDBDE_DXE5;synapse;ZipMaster192D_XE5;vclie;FireDACADSDriver;vcltouch;ACBr_TEFD;FIBPlus_XE5;QRDBase_RDDXE5;VclSmp;FireDACMSSQLDriver;FireDAC;DBXInformixDriver;Intraweb;DataSnapConnectors;FireDACDataSnapDriver;dsnapcon;DBXFirebirdDriver;PCN2;inet;FRCE_XE5;fmxobj;VDOPrint_DXE5;FireDACMySQLDriver;vclx;svn;DBXSybaseASADriver;tmsexdXE5;FireDACOracleDriver;fmxdae;RESTComponents;ACBrNFeDanfeQRpkg;QR5_RDXE5;bdertl;L207_r190;TInjectCollection;FireDACMSAccDriver;DataSnapIndy10ServerTransport;dbexpress;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
@@ -63,6 +70,7 @@
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <Debugger_RunParams>config.data=15</Debugger_RunParams>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
@@ -77,10 +85,14 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <Debugger_RunParams>config.data=15</Debugger_RunParams>
+        <Debugger_DebugSourcePath>C:\Users\Antonio\Documents\GitHub\MultiConfig\src\MultiConfig\;$(Debugger_DebugSourcePath)</Debugger_DebugSourcePath>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -94,22 +106,20 @@
         </DelphiCompile>
         <DCCReference Include="MultiConfigTest_Unit.pas">
             <Form>frmTest</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\src\Lock\Terasoft_git.Framework.Lock.pas"/>
         <DCCReference Include="..\src\Common\Terasoft_git.Framework.Types.pas"/>
         <DCCReference Include="..\src\Common\Terasoft_git.Framework.VisualMessage.pas"/>
         <DCCReference Include="..\src\Lock\Terasoft_git.Framework.Lock.Files.pas"/>
-        <DCCReference Include="..\src\Common\Terasoft_git.Framework.Texts.pas">
-            <Form>$R *.res</Form>
-        </DCCReference>
+        <DCCReference Include="..\src\Common\Terasoft_git.Framework.Texts.pas"/>
         <DCCReference Include="..\src\Timer\Terasoft_git.Framework.Timer.LR.pas"/>
         <DCCReference Include="..\src\Timer\Terasoft_git.Framework.Timer.pas"/>
         <DCCReference Include="..\src\MultiConfig\Terasoft_git.Framework.MultiConfig.pas"/>
         <DCCReference Include="..\src\Common\Terasoft_git.Framework.Cryptography.pas"/>
         <DCCReference Include="..\src\Common\Terasoft_git.Framework.Bytes.pas"/>
-        <DCCReference Include="..\src\MultiConfig\Terasoft_git.Framework.MultiConfig.INI.pas"/>
+        <DCCReference Include="..\src\dll\Terasoft_git.Framework.Initializer.Iface.pas"/>
         <None Include="..\README.md"/>
+        <None Include="..\src\multicfg.inc"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -180,6 +190,13 @@
                 <Source>
                     <Source Name="MainSource">MultiConfigTest.dpr</Source>
                 </Source>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcboffice2k190.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcbofficexp190.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k190.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp190.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Antonio\AppData\Roaming\IntraWeb XIV\Bin\dclIntraweb_14_DXE5.bpl">IntraWeb 14.0 Design Package for RAD Studio XE5</Excluded_Packages>
+                </Excluded_Packages>
             </Delphi.Personality>
             <Deployment/>
             <Platforms>

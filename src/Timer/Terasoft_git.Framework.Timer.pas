@@ -15,16 +15,16 @@ interface
 
     IRTimer = interface
       ['{DB0FE153-911A-4B66-9B01-42DC3FB0AF3B}']
-      function mark: TRTimerData; overload;
-      function uSec(initial, _end: TRTimerData): TLargeInteger;
-      function mSec(initial, _end: TRTimerData): TLargeInteger;
-      function Sec(initial, _end: TRTimerData): TLargeInteger;
-      function Minutes(initial, _end: TRTimerData): TLargeInteger;
-      function Hours(initial, _end: TRTimerData): TLargeInteger;
-      function getInitialTick: TRTimerData;
+      function mark: TRTimerData; overload;stdcall;
+      function uSec(initial, _end: TRTimerData): TLargeInteger;stdcall;
+      function mSec(initial, _end: TRTimerData): TLargeInteger;stdcall;
+      function Sec(initial, _end: TRTimerData): TLargeInteger;stdcall;
+      function Minutes(initial, _end: TRTimerData): TLargeInteger;stdcall;
+      function Hours(initial, _end: TRTimerData): TLargeInteger;stdcall;
+      function getInitialTick: TRTimerData;stdcall;
+      function mark(ptr: PTRTimerData) : TRTimerData; overload;stdcall;
+      function secondsToTicks(const seconds: TLargeInteger) : TLargeInteger;stdcall;
       property initialTick: TRTimerData read getInitialTick;
-      function mark(ptr: PTRTimerData) : TRTimerData; overload;
-      function secondsToTicks(const seconds: TLargeInteger) : TLargeInteger;
     end;
 
   function getHRTimer: IRTimer;

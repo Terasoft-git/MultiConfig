@@ -27,8 +27,6 @@ object frmTest: TfrmTest
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Tests'
-      ExplicitTop = 24
-      ExplicitHeight = 565
       object BitBtn1: TBitBtn
         Left = 16
         Top = 24
@@ -126,8 +124,6 @@ object frmTest: TfrmTest
     object TabSheet2: TTabSheet
       Caption = 'Values 1'
       ImageIndex = 1
-      ExplicitTop = 24
-      ExplicitHeight = 565
       object Memo1: TMemo
         Left = 0
         Top = 0
@@ -138,14 +134,11 @@ object frmTest: TfrmTest
           'Memo1')
         ScrollBars = ssBoth
         TabOrder = 0
-        ExplicitHeight = 565
       end
     end
     object TabSheet3: TTabSheet
       Caption = 'Values 2'
       ImageIndex = 2
-      ExplicitTop = 24
-      ExplicitHeight = 565
       object Memo2: TMemo
         Left = 0
         Top = 0
@@ -165,14 +158,11 @@ object frmTest: TfrmTest
           'nfEPsG2hfEKR6NBDcoSETtKMyLTy')
         ScrollBars = ssBoth
         TabOrder = 0
-        ExplicitHeight = 565
       end
     end
     object TabSheet4: TTabSheet
       Caption = 'Values 3'
       ImageIndex = 3
-      ExplicitTop = 24
-      ExplicitHeight = 565
       object Memo3: TMemo
         Left = 0
         Top = 0
@@ -192,7 +182,6 @@ object frmTest: TfrmTest
           'nfEPsG2hfEKR6NBDcoSETtKMyLTy')
         ScrollBars = ssBoth
         TabOrder = 0
-        ExplicitHeight = 565
       end
     end
   end

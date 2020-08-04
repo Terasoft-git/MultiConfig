@@ -1,3 +1,10 @@
+
+{$i multicfg.inc}
+
+{$if not defined(__MULTICFG_IMPL__)}
+  {$message fatal 'Remove this unit from project'}
+{$ifend}
+
 unit Terasoft_git.Framework.MultiConfig.INI;
 
 interface
@@ -8,7 +15,7 @@ interface
 
   function createConfigIniFile(const filename: String = MULTICONFIG_DEFAULTINIFILE; const hint: String = ''; crypted: boolean = false; crypter: ICryptografy = nil ): IConfigReaderWriter;
   function createConfigRegistry(const path: String = ''; rootkey: HKEY = 0; const hint: String = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter;
-  function createConfigIniString(const str: String; const hint: String = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter;
+  function createConfigIniString(const str: WideStringFramework; const hint: WideStringFramework = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter;
   function createConfigCmdLine(const prefix: String = ''; const hint: String = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter;
   function createConfigEnvVar(const prefix: String = ''; const hint: String = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter;
   function createConfigIniStrings(const strings: TStrings = nil; const hint: String = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter;
@@ -30,22 +37,22 @@ implementation
       fStrings: TStrings;
       fCrypter: ICryptografy;
       fCrypted: boolean;
-      function getReader: IConfigReader;
-      function getWriter: IConfigWriter;
-      function ReadString(const Section, Ident: WideStringFramework; const default: WideStringFramework = ''; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): WideStringFramework;
-      function ReadInteger(const Section, Ident: WideStringFramework; const Default: Integer = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): Integer;
-      procedure WriteString(const Section, Ident, value: WideStringFramework; crypt: boolean = false; crypter: ICryptografy = nil);
-      procedure WriteInteger(const Section, Ident: WideStringFramework; const value: Integer; crypt: boolean = false; crypter: ICryptografy = nil);
-      procedure deleteKey(const Section: WideStringFramework = ''; const Ident: WideStringFramework = '');
-      procedure populateIni(ini: TCustomIniFile; translate: boolean = true; printSource: boolean = false);
-      function getCrypted: boolean;
-      procedure setCrypted(const value: boolean);
-      function getCrypter: ICryptografy;
-      procedure setCrypter(const value: ICryptografy);
-      function getSource: WideStringFramework;
-      function printSource(list: TListSource): TListSource;
-      procedure updateIniFile;
-      procedure loadData;
+      function getReader: IConfigReader;stdcall;
+      function getWriter: IConfigWriter;stdcall;
+      function ReadString(const Section, Ident: WideStringFramework; const default: WideStringFramework = ''; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): WideStringFramework;stdcall;
+      function ReadInteger(const Section, Ident: WideStringFramework; const Default: Integer = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): Integer;stdcall;
+      procedure WriteString(const Section, Ident, value: WideStringFramework; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
+      procedure WriteInteger(const Section, Ident: WideStringFramework; const value: Integer; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
+      procedure deleteKey(const Section: WideStringFramework = ''; const Ident: WideStringFramework = '');stdcall;
+      procedure populateIni(ini: TCustomIniFile; translate: boolean = true; printSource: boolean = false);stdcall;
+      function getCrypted: boolean;stdcall;
+      procedure setCrypted(const value: boolean);stdcall;
+      function getCrypter: ICryptografy;stdcall;
+      procedure setCrypter(const value: ICryptografy);stdcall;
+      function getSource: WideStringFramework;stdcall;
+      function printSource(list: TListSource): TListSource;stdcall;
+      procedure updateIniFile;stdcall;
+      procedure loadData;stdcall;
     public
       constructor Create(aInif: TCustomIniFile; const hint: String; strings: TStrings = nil; crypted: boolean = false; crypter: ICryptografy = nil);
       destructor Destroy; override;
@@ -99,7 +106,7 @@ begin
   reg.RegIniFile.OpenKey(realPath,true);
 end;
 
-function createConfigIniString(const str: String; const hint: String; crypted: boolean; crypter: ICryptografy): IConfigReaderWriter;
+function createConfigIniString(const str: WideStringFramework; const hint: WideStringFramework; crypted: boolean; crypter: ICryptografy): IConfigReaderWriter;
   var
     f: TMemIniFile;
     s: TStrings;
@@ -242,8 +249,10 @@ procedure TIni.loadData;
       if (inif.FileName<>'') and FileExists(inif.FileName) then
         l.strings.LoadFromFile(inif.FileName)
       else if ( fStrings<>nil ) then
-        l.text := fStrings.Text;
-      if(fCrypted) then
+        l.text := fStrings.Text
+      else
+        l := nil;
+      if(fCrypted) and (l<>nil) then
         try
           l.text := decryptBase64ToString(l.text,fCrypter);
         except

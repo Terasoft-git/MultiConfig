@@ -15,15 +15,15 @@ interface
 
     ILock = interface
     ['{1057F19E-9AFE-4BF6-9B2A-365AC42B3C4D}']
-      function lock(timeOut: Int64): TLockType; overload;
+      function lock(timeOut: Int64): TLockType; overload; stdcall;
 
         //timeout in miliseconds
-      function lock(_type: TLockType = ltExclusive; timeOut: Int64 = 1000; key: IAsyncKeyState=nil): TLockType; overload;
+      function lock(_type: TLockType = ltExclusive; timeOut: Int64 = 1000; key: IAsyncKeyState=nil): TLockType; overload;stdcall;
 
-      procedure releaseLock;
-      function getStatus: TLockType;
-      function getParameter: Variant;
-      procedure setParameter(const Value: Variant);
+      procedure releaseLock;stdcall;
+      function getStatus: TLockType;stdcall;
+      function getParameter: Variant;stdcall;
+      procedure setParameter(const Value: Variant);stdcall;
       function getSaveUserdData: boolean; stdcall;
       procedure setSaveUserData(const value: boolean); stdcall;
       property saveUserData: boolean read getSaveUserdData write setSaveUserData;
