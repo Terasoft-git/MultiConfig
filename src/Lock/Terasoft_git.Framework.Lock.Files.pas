@@ -23,14 +23,14 @@ implementation
       fHandle: THandle;
       fSaveUserData: boolean;
 
-      procedure saveUserData;
+      procedure saveUserData;stdcall;
 
-      function lock(timeOut: Int64): TLockType; overload;
-      function lock(_type: TLockType = ltExclusive; timeOut: Int64 = 1000; key: IAsyncKeyState=nil): TLockType; overload; //time in miliseconds
-      procedure releaseLock;
-      function getStatus: TLockType;
-      function getParameter: Variant;
-      procedure setParameter(const Value: Variant);
+      function lock(timeOut: Int64): TLockType; overload;stdcall;
+      function lock(_type: TLockType = ltExclusive; timeOut: Int64 = 1000; key: IAsyncKeyState=nil): TLockType; overload;stdcall;
+      procedure releaseLock;stdcall;
+      function getStatus: TLockType;stdcall;
+      function getParameter: Variant;stdcall;
+      procedure setParameter(const Value: Variant);stdcall;
       function getSaveUserdData: boolean; stdcall;
       procedure setSaveUserData(const value: boolean); stdcall;
       property parameter: Variant read getParameter write setParameter;

@@ -1,3 +1,6 @@
+
+{$i multicfg.inc}
+
 unit Terasoft_git.Framework.MultiConfig;
 
 interface
@@ -19,31 +22,31 @@ interface
 
     IConfigReader = interface
       ['{3BF00900-8FE6-462B-82C5-48C9C228B03A}']
-      function ReadString(const Section, Ident: WideStringFramework; const default: WideStringFramework = ''; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): WideStringFramework;
-      function ReadInteger(const Section, Ident: WideStringFramework; const Default: Integer = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): Integer;
-      procedure populateIni(ini: TCustomIniFile; translate: boolean = true; printSource: boolean = false);
-      function printSource(list: TListSource=nil): TListSource;
-      function getCrypted: boolean;
-      procedure setCrypted(const value: boolean);
-      function getCrypter: ICryptografy;
-      procedure setCrypter(const value: ICryptografy);
-      function getSource: WideStringFramework;
+      function ReadString(const Section, Ident: WideStringFramework; const default: WideStringFramework = ''; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): WideStringFramework;stdcall;
+      function ReadInteger(const Section, Ident: WideStringFramework; const Default: Integer = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): Integer;stdcall;
+      procedure populateIni(ini: TCustomIniFile; translate: boolean = true; printSource: boolean = false);stdcall;
+      function printSource(list: TListSource=nil): TListSource;stdcall;
+      function getCrypted: boolean;stdcall;
+      procedure setCrypted(const value: boolean);stdcall;
+      function getCrypter: ICryptografy;stdcall;
+      procedure setCrypter(const value: ICryptografy);stdcall;
+      function getSource: WideStringFramework;stdcall;
       property crypter: ICryptografy read getCrypter write setCrypter;
       property crypted: boolean read getCrypted write setCrypted;
     end;
 
     IConfigWriter = interface
       ['{BC0DF9D9-3F9E-413E-B917-A4387B9D8340}']
-      procedure WriteString(const Section, Ident, value: WideStringFramework; crypt: boolean = false; crypter: ICryptografy = nil);
-      procedure WriteInteger(const Section, Ident: WideStringFramework; const value: Integer; crypt: boolean = false; crypter: ICryptografy = nil);
-      procedure deleteKey(const Section: WideStringFramework = ''; const Ident: WideStringFramework = '');
-      function printSource(list: TListSource=nil): TListSource;
+      procedure WriteString(const Section, Ident, value: WideStringFramework; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
+      procedure WriteInteger(const Section, Ident: WideStringFramework; const value: Integer; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
+      procedure deleteKey(const Section: WideStringFramework = ''; const Ident: WideStringFramework = '');stdcall;
+      function printSource(list: TListSource=nil): TListSource;stdcall;
     end;
 
     IConfigReaderWriter = interface
       ['{B4F9734D-95AA-4BF5-ACD2-948E875783AF}']
-      function getReader: IConfigReader;
-      function getWriter: IConfigWriter;
+      function getReader: IConfigReader;stdcall;
+      function getWriter: IConfigWriter;stdcall;
 
       property reader: IConfigReader read getReader;
       property writer: IConfigWriter read getWriter;
@@ -52,51 +55,51 @@ interface
 
     IMultiConfig = interface
     ['{9B2816FB-F6FE-422C-ABF6-AD80B4CE61AB}']
-      function getMultiReader: IConfigReader;
-      function getMultiWriter: IConfigWriter;
-      function addReaderWriter(readerWriter: IConfigReaderWriter; position: Integer = MAXINT): IMultiConfig;
+      function getMultiReader: IConfigReader;stdcall;
+      function getMultiWriter: IConfigWriter;stdcall;
+      function addReaderWriter(readerWriter: IConfigReaderWriter; position: Integer = MAXINT): IMultiConfig;stdcall;
 
-      procedure populateIni(ini: TCustomIniFile; translate: boolean = true; printSource: boolean = false);
+      procedure populateIni(ini: TCustomIniFile; translate: boolean = true; printSource: boolean = false);stdcall;
 
       //for Readers
-      function ReadString(const Section, Ident: WideStringFramework; const Default: WideStringFramework = ''; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): WideStringFramework;
-      function ReadInteger(const Section, Ident: WideStringFramework; const Default: Integer = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): Integer;
-      function ReadInt64(const Section, Ident: WideStringFramework; const Default: Int64 = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): Int64;
-      function ReadDateTime(const Section, Ident: WideStringFramework; const Default: TDateTime = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): TDateTime;
-      function ReadBool(const Section, Ident: WideStringFramework; const Default: boolean = false; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): boolean;
-      function ReadExtended(const Section, Ident: WideStringFramework; const Default: Extended = 0; crypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): Extended;
+      function ReadString(const Section, Ident: WideStringFramework; const Default: WideStringFramework = ''; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): WideStringFramework;stdcall;
+      function ReadInteger(const Section, Ident: WideStringFramework; const Default: Integer = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): Integer;stdcall;
+      function ReadInt64(const Section, Ident: WideStringFramework; const Default: Int64 = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): Int64;stdcall;
+      function ReadDateTime(const Section, Ident: WideStringFramework; const Default: TDateTime = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): TDateTime;stdcall;
+      function ReadBool(const Section, Ident: WideStringFramework; const Default: boolean = false; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): boolean;stdcall;
+      function ReadExtended(const Section, Ident: WideStringFramework; const Default: Extended = 0; crypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): Extended;stdcall;
 
       //Writer
-      procedure WriteString(const Section, Ident, value: WideStringFramework; crypt: boolean = false; crypter: ICryptografy = nil);
-      procedure WriteInteger(const Section, Ident: WideStringFramework; const value: Integer; crypt: boolean = false; crypter: ICryptografy = nil);
-      procedure WriteInt64(const Section, Ident: WideStringFramework; const value: Int64; crypt: boolean = false; crypter: ICryptografy = nil);
-      procedure WriteDateTime(const Section, Ident: WideStringFramework; const value: TDateTime; crypt: boolean = false; crypter: ICryptografy = nil);
-      procedure WriteBool(const Section, Ident: WideStringFramework; const value: boolean; crypt: boolean = false; crypter: ICryptografy = nil);
-      procedure WriteExtended(const Section, Ident: WideStringFramework; const value: Extended; crypt: boolean = false; crypter: ICryptografy = nil);
+      procedure WriteString(const Section, Ident, value: WideStringFramework; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
+      procedure WriteInteger(const Section, Ident: WideStringFramework; const value: Integer; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
+      procedure WriteInt64(const Section, Ident: WideStringFramework; const value: Int64; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
+      procedure WriteDateTime(const Section, Ident: WideStringFramework; const value: TDateTime; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
+      procedure WriteBool(const Section, Ident: WideStringFramework; const value: boolean; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
+      procedure WriteExtended(const Section, Ident: WideStringFramework; const value: Extended; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
 
-      procedure ReadSectionValues(const Section: WideStringFramework; Strings: TStrings);
-      procedure ReadSections(Strings: TStrings);
+      procedure ReadSectionValues(const Section: WideStringFramework; Strings: TStrings);stdcall;
+      procedure ReadSections(Strings: TStrings);stdcall;
 
-      procedure deleteKey(const Section: WideStringFramework = ''; const Ident: WideStringFramework = '');
+      procedure deleteKey(const Section: WideStringFramework = ''; const Ident: WideStringFramework = '');stdcall;
 
       function getDefaultReaderWriter: IConfigReaderWriter; stdcall;
       procedure setDefaultReaderWriter(const value: IConfigReaderWriter); stdcall;
       function setLastAsDefaultReaderWriter: IMultiConfig; stdcall;
-      function translate(const text: WideStringFramework; const initMark: WideStringFramework = ''; const endMark: WideStringFramework = ''): WideStringFramework;
-      function toString(traduzir: boolean = true; printSource: boolean = false): WideStringFramework;
-      property defaultReaderWriter: IConfigReaderWriter read getDefaultReaderWriter write setDefaultReaderWriter;
-      function ReadSectionsList(lista: IStrings = nil): IStrings;
-      function ReadSectionValuesList(const Section: WideStringFramework; list: IStrings = nil): IStrings;
+      function translate(const text: WideStringFramework; const initMark: WideStringFramework = ''; const endMark: WideStringFramework = ''): WideStringFramework;stdcall;
+      function toString(traduzir: boolean = true; printSource: boolean = false): WideStringFramework;stdcall;
+      function ReadSectionsList(lista: IStrings = nil): IStrings;stdcall;
+      function ReadSectionValuesList(const Section: WideStringFramework; list: IStrings = nil): IStrings;stdcall;
 
-      function valueExists(const Section, Ident: WideStringFramework): boolean;
+      function valueExists(const Section, Ident: WideStringFramework): boolean;stdcall;
 
-      function printSource(list: TListSource=nil): TListSource;
-      function getReaderWriterAt(const index: Integer): IConfigReaderWriter;
-      function getReaderAt(const index: Integer): IConfigReader;
-      function getWriterAt(const index: Integer): IConfigWriter;
+      function printSource(list: TListSource=nil): TListSource;stdcall;
+      function getReaderWriterAt(const index: Integer): IConfigReaderWriter;stdcall;
+      function getReaderAt(const index: Integer): IConfigReader;stdcall;
+      function getWriterAt(const index: Integer): IConfigWriter;stdcall;
 
       property multiReader: IConfigReader read getMultiReader;
       property multiWriter: IConfigWriter read getMultiWriter;
+      property defaultReaderWriter: IConfigReaderWriter read getDefaultReaderWriter write setDefaultReaderWriter;
 
     end;
 
@@ -104,67 +107,75 @@ interface
 
   function createMultiConfig: IMultiConfig;
   function createConfigIniFile(const filename: String = MULTICONFIG_DEFAULTINIFILE; const hint: String = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter;
-  function createConfigIniString(const str: String=''; const hint: String = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter;
+  function createConfigIniString(const str: WideStringFramework=''; const hint: WideStringFramework = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter;
   function createConfigIniStrings(const strings: TStrings = nil; const hint: String = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter;
   function createConfigRegistry(const path: String = ''; rootkey: HKEY = 0; const hint: String = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter;
   function createConfigCmdLine(const prefix: String = ''; const hint: String = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter;
   function createConfigEnvVar(const prefix: String = ''; const hint: String = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter;
 
-  function checkListSource(var list: TListSource): TListSource;
+  {$if defined(__MULTICFG_IMPL__)}
+    function checkListSource(var list: TListSource): TListSource;
+  {$ifend}
 
 
 implementation
   uses
-    SysUtils, Math, StrUtils, Terasoft_git.Framework.MultiConfig.INI;
+    SysUtils, Math, StrUtils,
 
+    {$if defined(__MULTICFG_IMPL__)}
+      Terasoft_git.Framework.MultiConfig.INI,
+    {$ifend}
+    Terasoft_git.Framework.Initializer.Iface;
+
+ {$if defined(__MULTICFG_IMPL__)}
   type
     TMultiConfig = class(TInterfacedObject, IMultiConfig, IConfigReader, IConfigWriter)
     protected
       fCount: Integer;
       fList: array of IConfigReaderWriter;
       fDefaultReaderWriter: IConfigReaderWriter;
-      function getMultiReader: IConfigReader;
-      function getMultiWriter: IConfigWriter;
-      function addReaderWriter(readerWriter: IConfigReaderWriter; position: Integer = MAXINT): IMultiConfig;
+      function getMultiReader: IConfigReader;stdcall;
+      function getMultiWriter: IConfigWriter;stdcall;
+      function addReaderWriter(readerWriter: IConfigReaderWriter; position: Integer = MAXINT): IMultiConfig;stdcall;
 
-      function ReadString(const Section, Ident: WideStringFramework; const Default: WideStringFramework = ''; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): WideStringFramework;
-      function ReadInteger(const Section, Ident: WideStringFramework; const Default: Integer = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): Integer;
-      function ReadInt64(const Section, Ident: WideStringFramework; const Default: Int64 = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): Int64;
-      function ReadDateTime(const Section, Ident: WideStringFramework; const Default: TDateTime = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): TDateTime;
-      function ReadBool(const Section, Ident: WideStringFramework; const Default: boolean = false; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): boolean;
-      function ReadExtended(const Section, Ident: WideStringFramework; const Default: Extended = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): Extended;
+      function ReadString(const Section, Ident: WideStringFramework; const Default: WideStringFramework = ''; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): WideStringFramework;stdcall;
+      function ReadInteger(const Section, Ident: WideStringFramework; const Default: Integer = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): Integer;stdcall;
+      function ReadInt64(const Section, Ident: WideStringFramework; const Default: Int64 = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): Int64;stdcall;
+      function ReadDateTime(const Section, Ident: WideStringFramework; const Default: TDateTime = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): TDateTime;stdcall;
+      function ReadBool(const Section, Ident: WideStringFramework; const Default: boolean = false; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): boolean;stdcall;
+      function ReadExtended(const Section, Ident: WideStringFramework; const Default: Extended = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): Extended;stdcall;
 
-      procedure WriteString(const Section, Ident, value: WideStringFramework; crypt: boolean = false; crypter: ICryptografy = nil);
-      procedure WriteInteger(const Section, Ident: WideStringFramework; const value: Integer; crypt: boolean = false; crypter: ICryptografy = nil);
-      procedure WriteInt64(const Section, Ident: WideStringFramework; const value: Int64; crypt: boolean = false; crypter: ICryptografy = nil);
-      procedure WriteDateTime(const Section, Ident: WideStringFramework; const value: TDateTime; crypt: boolean = false; crypter: ICryptografy = nil);
-      procedure WriteBool(const Section, Ident: WideStringFramework; const value: boolean; crypt: boolean = false; crypter: ICryptografy = nil);
-      procedure WriteExtended(const Section, Ident: WideStringFramework; const value: Extended; crypt: boolean = false; crypter: ICryptografy = nil);
+      procedure WriteString(const Section, Ident, value: WideStringFramework; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
+      procedure WriteInteger(const Section, Ident: WideStringFramework; const value: Integer; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
+      procedure WriteInt64(const Section, Ident: WideStringFramework; const value: Int64; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
+      procedure WriteDateTime(const Section, Ident: WideStringFramework; const value: TDateTime; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
+      procedure WriteBool(const Section, Ident: WideStringFramework; const value: boolean; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
+      procedure WriteExtended(const Section, Ident: WideStringFramework; const value: Extended; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
 
-      procedure populateIni(ini: TCustomIniFile; translate: boolean = true; printSource: boolean = false);
-      procedure ReadSectionValues(const Section: WideStringFramework; Strings: TStrings);
-      procedure ReadSections(Strings: TStrings);
-      procedure deleteKey(const Section: WideStringFramework = ''; const Ident: WideStringFramework = '');
+      procedure populateIni(ini: TCustomIniFile; translate: boolean = true; printSource: boolean = false);stdcall;
+      procedure ReadSectionValues(const Section: WideStringFramework; Strings: TStrings);stdcall;
+      procedure ReadSections(Strings: TStrings);stdcall;
+      procedure deleteKey(const Section: WideStringFramework = ''; const Ident: WideStringFramework = '');stdcall;
 
       function getDefaultReaderWriter: IConfigReaderWriter; stdcall;
       procedure setDefaultReaderWriter(const value: IConfigReaderWriter); stdcall;
       function setLastAsDefaultReaderWriter: IMultiConfig; stdcall;
-      function toString(translate: boolean = true; printSource: boolean = false): WideStringFramework;
-      function translate(const text: WideStringFramework; const initMark: WideStringFramework = ''; const endMark: WideStringFramework = ''): WideStringFramework;
-      function ReadSectionsList(list: IStrings = nil): IStrings;
-      function ReadSectionValuesList(const Section: WideStringFramework; list: IStrings = nil): IStrings;
+      function toString(translate: boolean = true; printSource: boolean = false): WideStringFramework;stdcall;
+      function translate(const text: WideStringFramework; const initMark: WideStringFramework = ''; const endMark: WideStringFramework = ''): WideStringFramework;stdcall;
+      function ReadSectionsList(list: IStrings = nil): IStrings;stdcall;
+      function ReadSectionValuesList(const Section: WideStringFramework; list: IStrings = nil): IStrings;stdcall;
 
-      function valueExists(const Section, Ident: WideStringFramework): boolean;
-      function getSource: WideStringFramework;
-      function printSource(list: TListSource=nil): TListSource;
-      function getCrypter: ICryptografy;
-      procedure setCrypter(const value: ICryptografy);
-      function getCrypted: boolean;
-      procedure setCrypted(const value: boolean);
+      function valueExists(const Section, Ident: WideStringFramework): boolean;stdcall;
+      function getSource: WideStringFramework;stdcall;
+      function printSource(list: TListSource=nil): TListSource;stdcall;
+      function getCrypter: ICryptografy;stdcall;
+      procedure setCrypter(const value: ICryptografy);stdcall;
+      function getCrypted: boolean;stdcall;
+      procedure setCrypted(const value: boolean);stdcall;
 
-      function getReaderWriterAt(const index: Integer): IConfigReaderWriter;
-      function getReaderAt(const index: Integer): IConfigReader;
-      function getWriterAt(const index: Integer): IConfigWriter;
+      function getReaderWriterAt(const index: Integer): IConfigReaderWriter;stdcall;
+      function getReaderAt(const index: Integer): IConfigReader;stdcall;
+      function getWriterAt(const index: Integer): IConfigWriter;stdcall;
 
     public
       constructor Create;
@@ -172,48 +183,84 @@ implementation
 
   const
     invalidStr = '++;;;---@@';
+  {$ifend}
 
 
 function createMultiConfig: IMultiConfig;
 begin
-  Result := TMultiConfig.Create;
+  {$if defined(__NO_MULTICFG_IMPL__)}
+    Result := createIfaceDllMultiCfg.createMultiConfig;
+  {$else}
+    Result := TMultiConfig.Create;
+  {$ifend}
 end;
 
 function createConfigIniFile(const filename: String; const hint: String; crypted: boolean; crypter: ICryptografy): IConfigReaderWriter;
 begin
-  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigIniFile(filename,hint,crypted,crypter);
+  {$if defined(__NO_MULTICFG_IMPL__)}
+    Result := createIfaceDllMultiCfg.createConfigIniFile(filename,hint,crypted,crypter);
+  {$else}
+    Result := Terasoft_git.Framework.MultiConfig.INI.createConfigIniFile(filename,hint,crypted,crypter);
+  {$ifend}
 end;
 
 function defaultMultiConfigIniFile(crypted: boolean; crypter: ICryptografy): IMultiConfig;
 begin
   //adds cmd line parameters + envvars + exe.ini
-  Result := createMultiConfig.addReaderWriter(createConfigCmdLine('',''{,crypted,crypter})).addReaderWriter(createConfigEnvVar('',''{,crypted,crypter})).addReaderWriter(createConfigIniFile(ChangeFileExt(paramStr(0),'.ini'),'',crypted,crypter));
+  {$if defined(__NO_MULTICFG_IMPL__)}
+    Result := createIfaceDllMultiCfg.defaultMultiConfigIniFile(crypted,crypter);
+  {$else}
+    Result := createMultiConfig.addReaderWriter(createConfigCmdLine('',''{,crypted,crypter})).addReaderWriter(createConfigEnvVar('',''{,crypted,crypter})).addReaderWriter(createConfigIniFile(ChangeFileExt(paramStr(0),'.ini'),'',crypted,crypter));
+  {$ifend}
 end;
 
-function createConfigIniString(const str: String; const hint: String; crypted: boolean; crypter: ICryptografy): IConfigReaderWriter;
+function createConfigIniString(const str: WideStringFramework; const hint: WideStringFramework; crypted: boolean; crypter: ICryptografy): IConfigReaderWriter;
 begin
-  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigIniString(str,hint,crypted,crypter);
+  {$if defined(__NO_MULTICFG_IMPL__)}
+    Result := createIfaceDllMultiCfg.createConfigIniString(str,hint,crypted,crypter);
+  {$else}
+    Result := Terasoft_git.Framework.MultiConfig.INI.createConfigIniString(str,hint,crypted,crypter);
+  {$ifend}
 end;
 
 function createConfigIniStrings(const strings: TStrings; const hint: String; crypted: boolean; crypter: ICryptografy): IConfigReaderWriter;
 begin
-  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigIniStrings(strings, hint,crypted,crypter);
+  {$if defined(__NO_MULTICFG_IMPL__)}
+    raise Exception.Create('createConfigIniStrings: Not implemented.');
+  {$else}
+    Result := Terasoft_git.Framework.MultiConfig.INI.createConfigIniStrings(strings, hint,crypted,crypter);
+  {$ifend}
 end;
 
 function createConfigRegistry(const path: String; rootkey: HKEY; const hint: String; crypted: boolean; crypter: ICryptografy): IConfigReaderWriter;
 begin
-  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigRegistry(path,rootkey,hint,crypted,crypter);
+  {$if defined(__NO_MULTICFG_IMPL__)}
+    Result := createIfaceDllMultiCfg.createConfigRegistry(path,rootkey,hint,crypted,crypter);
+  {$else}
+    Result := Terasoft_git.Framework.MultiConfig.INI.createConfigRegistry(path,rootkey,hint,crypted,crypter);
+  {$ifend}
 end;
 
 function createConfigCmdLine(const prefix: String; const hint: String; crypted: boolean; crypter: ICryptografy): IConfigReaderWriter;
 begin
-  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigCmdLine(prefix,hint,crypted,crypter);
+  {$if defined(__NO_MULTICFG_IMPL__)}
+    Result := createIfaceDllMultiCfg.createConfigCmdLine(prefix,hint,crypted,crypter);
+  {$else}
+    Result := Terasoft_git.Framework.MultiConfig.INI.createConfigCmdLine(prefix,hint,crypted,crypter);
+  {$ifend}
 end;
 
 function createConfigEnvVar(const prefix: String; const hint: String; crypted: boolean; crypter: ICryptografy): IConfigReaderWriter;
 begin
-  Result := Terasoft_git.Framework.MultiConfig.INI.createConfigEnvVar(prefix,hint,crypted,crypter);
+  {$if defined(__NO_MULTICFG_IMPL__)}
+    Result := createIfaceDllMultiCfg.createConfigEnvVar(prefix,hint,crypted,crypter);
+  {$else}
+    Result := Terasoft_git.Framework.MultiConfig.INI.createConfigEnvVar(prefix,hint,crypted,crypter);
+  {$ifend}
 end;
+
+
+{$if defined(__MULTICFG_IMPL__)}
 
 { TMultiConfig }
 
@@ -625,6 +672,9 @@ begin
     list := TCollections.CreateList<WideStringFramework>;
   Result := list;
 end;
+
+{$ifend}
+
 
 
 end.

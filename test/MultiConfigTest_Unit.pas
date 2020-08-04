@@ -1,3 +1,6 @@
+
+{$i multicfg.inc}
+
 unit MultiConfigTest_Unit;
 
 interface
@@ -131,7 +134,10 @@ procedure TfrmTest.BitBtn5Click(Sender: TObject);
     rw, reg: IConfigReaderWriter;
 begin
   mm.Lines.Clear;
-  globalCrypter.setSeed(bytesOf(editSeed.Text));
+  if(globalCrypter=nil) then
+    globalCrypter := createCrypter(bytesOf(editSeed.Text))
+  else
+    globalCrypter.setSeed(bytesOf(editSeed.Text));
   //We provided some comand lines too;
   //Default is to read from cmdlines, envvars and ini from exe.ini
   multi := defaultMultiConfigIniFile(true);
@@ -149,11 +155,19 @@ begin
   reg := createConfigRegistry('\MyApp\MyTest');
   multi.addReaderWriter(reg);
 
-  multi.addReaderWriter(createConfigIniStrings(Memo1.Lines,'Memo1',true,nil));
-  rw := createConfigIniStrings(Memo2.Lines,'Memo2');
-  multi.addReaderWriter(rw);
-  multi.WriteDateTime('config','app',now);
-  multi.addReaderWriter(createConfigIniStrings(Memo3.Lines,'Memo3',true,nil));
+  {$if defined(__MULTICFG_IMPL__)}
+    multi.addReaderWriter(createConfigIniStrings(Memo1.Lines,'Memo1',true,nil));
+    rw := createConfigIniStrings(Memo2.Lines,'Memo2');
+    multi.addReaderWriter(rw);
+    multi.WriteDateTime('config','app',now);
+    multi.addReaderWriter(createConfigIniStrings(Memo3.Lines,'Memo3',true,nil));
+  {$else}
+    multi.addReaderWriter(createConfigIniString(Memo1.Lines.Text));
+    rw := createConfigIniString(Memo2.Lines.Text);
+    multi.addReaderWriter(rw);
+    multi.WriteDateTime('config','app',now);
+    multi.addReaderWriter(createConfigIniString(Memo3.Lines.Text));
+  {$ifend}
 
   reg.writer.WriteString('in','value','test');
 

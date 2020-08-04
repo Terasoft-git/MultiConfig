@@ -1,3 +1,6 @@
+
+{$i multicfg.inc}
+
 unit Terasoft_git.Framework.Cryptography;
 
 interface
@@ -17,12 +20,12 @@ interface
     //Simple interface for cryptografy
     ICryptografy = interface
     ['{AE572F47-B1C4-4725-83B1-34E50211632F}']
-      function encryptString(const str: WideStringFramework): TBytes;
-      function encryptBytes(const bytes: TBytes): TBytes;
-      function decryptBytes(const bytes: TBytes): TBytes;
-      procedure setSeed(const seed: TBytes);
-      procedure setSaltLen(const value: Integer);
-      function getSaltlen: Integer;
+      function encryptString(const str: WideStringFramework): TBytes;stdcall;
+      function encryptBytes(const bytes: TBytes): TBytes;stdcall;
+      function decryptBytes(const bytes: TBytes): TBytes;stdcall;
+      procedure setSeed(const seed: TBytes);stdcall;
+      procedure setSaltLen(const value: Integer);stdcall;
+      function getSaltlen: Integer;stdcall;
       property saltLen: Integer read getSaltlen write setSaltlen;
     end;
 
@@ -34,26 +37,32 @@ interface
   function decryptBase64ToString(const base64: String; decrypter: ICryptografy = nil; padding: Char = '='): String;
 
 implementation
+
   uses
-    Spring.Cryptography, Terasoft_git.Framework.Bytes;
+    {$if defined(__CRYPTO_IMPL__)}
+      Spring.Cryptography,
+    {$ifend}
+    Terasoft_git.Framework.Bytes, Terasoft_git.Framework.Initializer.Iface;
 
 
+ {$if defined(__CRYPTO_IMPL__)}
   type
     // Simple Crypter that uses Spring.Cryptography
     TCrypter=class(TInterfacedObject, ICryptografy)
     protected
       fSaltlen: Integer;
       crypter: ISymmetricAlgorithm;
-      function encryptString(const str: WideStringFramework): TBytes;
-      function encryptBytes(const bytes: TBytes): TBytes;
-      function decryptBytes(const bytes: TBytes): TBytes;
-      procedure setSeed(const seed: TBytes);
-      procedure setSaltLen(const value: Integer);
-      function getSaltlen: Integer;
+      function encryptString(const str: WideStringFramework): TBytes;stdcall;
+      function encryptBytes(const bytes: TBytes): TBytes;stdcall;
+      function decryptBytes(const bytes: TBytes): TBytes;stdcall;
+      procedure setSeed(const seed: TBytes);stdcall;
+      procedure setSaltLen(const value: Integer);stdcall;
+      function getSaltlen: Integer;stdcall;
     public
       constructor Create;
       destructor Destroy; override;
     end;
+  {$ifend}
 
 function encryptStringToBase64(const str: String; wrapLines: boolean = false; crypter: ICryptografy = nil; padding: Char = '='): String;
 begin
@@ -75,9 +84,15 @@ end;
 
 function createCrypter(const seed: TBytes): ICryptografy;
 begin
-  Result := TCrypter.Create;
-  Result.setSeed(seed);
+ {$if defined(__CRYPTO_IMPL__)}
+    Result := TCrypter.Create;
+    Result.setSeed(seed);
+ {$else}
+    createIfaceDllMultiCfg.createCrypter(seed);
+ {$ifend}
 end;
+
+{$if defined(__CRYPTO_IMPL__)}
 
 { TCripter }
 
@@ -139,11 +154,14 @@ begin
   k := copy(sha512OfBytes(ReverseBitsOfBytes(k)),0,crypter.BlockSize div 8);
   crypter.IV := k;
 end;
+{$ifend}
 
 initialization
-  {$if defined(DEBUG)}
-    globalCrypter := createCrypter(bytesOf(CRYPTO_DUMMY_SEED));
-  {$ifend}
+   {$if defined(__CRYPTO_IMPL__)}
+    {$if defined(DEBUG)}
+      globalCrypter := createCrypter(bytesOf(CRYPTO_DUMMY_SEED));
+    {$ifend}
+   {$ifend}
 
 
 end.

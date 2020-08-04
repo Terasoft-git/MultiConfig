@@ -2,7 +2,7 @@ unit Terasoft_git.Framework.Initializer.Impl;
 
 interface
   uses
-    Terasoft_git.Framework.Types,
+    Terasoft_git.Framework.Types, SysUtils,
     Terasoft_git.Framework.Initializer.Iface;
 
   function createMutiCfg: IMultiCfgCreator;
@@ -12,7 +12,8 @@ interface
 implementation
   uses
     Classes, Terasoft_git.Framework.MultiConfig,
-    Terasoft_git.Framework.Cryptography, Windows;
+    Terasoft_git.Framework.Cryptography, Windows,
+  Terasoft_git.Framework.Timer.LR;
 
   type
     TCreator = class(TInterfacedObject, IMultiCfgCreator)
@@ -24,6 +25,10 @@ implementation
       function createConfigRegistry(const path: WideStringFramework = ''; rootkey: HKEY = 0; const hint: WideStringFramework = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter; stdcall;
       function createConfigCmdLine(const prefix: WideStringFramework = ''; const hint: WideStringFramework = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter; stdcall;
       function createConfigEnvVar(const prefix: WideStringFramework = ''; const hint: WideStringFramework = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter; stdcall;
+
+      function createCrypter(const seed: TBytes): ICryptografy;
+    public
+      constructor Create;
     end;
 
 
@@ -33,6 +38,12 @@ begin
 end;
 
 { TCreator }
+
+constructor TCreator.Create;
+begin
+  inherited;
+  initLRTimer;
+end;
 
 function TCreator.createConfigCmdLine(const prefix, hint: WideStringFramework; crypted: boolean; crypter: ICryptografy): IConfigReaderWriter;
 begin
@@ -57,6 +68,11 @@ end;
 function TCreator.createConfigRegistry(const path: WideStringFramework; rootkey: HKEY; const hint: WideStringFramework; crypted: boolean; crypter: ICryptografy): IConfigReaderWriter;
 begin
   Result := Terasoft_git.Framework.MultiConfig.createConfigRegistry(path,rootkey,hint,crypted,crypter);
+end;
+
+function TCreator.createCrypter(const seed: TBytes): ICryptografy;
+begin
+  Result := Terasoft_git.Framework.Cryptography.createCrypter(seed);
 end;
 
 function TCreator.createMultiConfig: IMultiConfig;

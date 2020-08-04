@@ -5,6 +5,7 @@ interface
     Terasoft_git.Framework.Types, Terasoft_git.Framework.Timer;
 
   function getLRTimer: IRTimer;
+  procedure initLRTimer;
 
 implementation
   uses
@@ -15,15 +16,15 @@ implementation
     protected
       fTick: TRTimerData;
       olds: DWORD;
-      function mark: TRTimerData; overload;
-      function uSec(initial, _end: TRTimerData): TLargeInteger;
-      function mSec(initial, _end: TRTimerData): TLargeInteger;
-      function Sec(initial, _end: TRTimerData): TLargeInteger;
-      function Minutes(initial, _end: TRTimerData): TLargeInteger;
-      function Hours(initial, _end: TRTimerData): TLargeInteger;
-      function getInitialTick: TRTimerData;
-      function mark(ptr: PTRTimerData) : TRTimerData; overload;
-      function secondstoTicks(const seconds: TLargeInteger) : TLargeInteger;
+      function mark: TRTimerData; overload;stdcall;
+      function uSec(initial, _end: TRTimerData): TLargeInteger;stdcall;
+      function mSec(initial, _end: TRTimerData): TLargeInteger;stdcall;
+      function Sec(initial, _end: TRTimerData): TLargeInteger;stdcall;
+      function Minutes(initial, _end: TRTimerData): TLargeInteger;stdcall;
+      function Hours(initial, _end: TRTimerData): TLargeInteger;stdcall;
+      function getInitialTick: TRTimerData;stdcall;
+      function mark(ptr: PTRTimerData) : TRTimerData; overload;stdcall;
+      function secondstoTicks(const seconds: TLargeInteger) : TLargeInteger;stdcall;
     public
       constructor Create;
     end;
@@ -113,11 +114,13 @@ begin
   Result := ((_end.mark - initial.mark) * 1000);
 end;
 
-procedure __init;
+procedure initLRTimer;
 begin
   try
-    cs := TCriticalSection.Create;
-    LRTimerGlobal := getLRTimer;
+    if(cs=nil) then
+      cs := TCriticalSection.Create;
+    if(LRTimerGlobal=nil) then
+      LRTimerGlobal := getLRTimer;
   except
     LRTimerGlobal := nil;
   end;
@@ -125,7 +128,7 @@ begin
 end;
 
 initialization
-  __init;
+  initLRTimer;
 
 finalization
   freeAndNil(cs);
