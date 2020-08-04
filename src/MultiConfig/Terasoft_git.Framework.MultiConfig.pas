@@ -5,7 +5,10 @@ unit Terasoft_git.Framework.MultiConfig;
 
 interface
   uses
-    Classes, Terasoft_git.Framework.Types,Spring.Collections,
+    Classes, Terasoft_git.Framework.Types,
+    {$if defined(DXE_UP)}
+      Spring.Collections,
+    {$ifend}
     Terasoft_git.Framework.Cryptography,Windows,
     Terasoft_git.Framework.Texts,IniFiles;
 
