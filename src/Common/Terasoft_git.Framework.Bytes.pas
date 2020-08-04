@@ -5,13 +5,14 @@ unit Terasoft_git.Framework.Bytes;
 
 interface
   uses
-    SysUtils;
+    SysUtils, Terasoft_git.Framework.Types;
 
   //to bytes
-  function MD5OfBytes(const bytes: TBytes; count: Integer = 1): TBytes;
-  function sha256OfBytes(const bytes: TBytes; count: Integer = 1): TBytes;
-  function sha512OfBytes(const bytes: TBytes; count: Integer = 1): TBytes;
-  function base64StringToBytes( const str: String; padding: Char = '=' ): TBytes;
+  {$if defined(DXE_UP)}
+    function MD5OfBytes(const bytes: TBytes; count: Integer = 1): TBytes;
+    function sha256OfBytes(const bytes: TBytes; count: Integer = 1): TBytes;
+    function sha512OfBytes(const bytes: TBytes; count: Integer = 1): TBytes;
+    function base64StringToBytes( const str: String; padding: Char = '=' ): TBytes;
 
   //from bytes
   function bytesToHexString(const bytes: TBytes) : String;
@@ -21,20 +22,25 @@ interface
   //bytes to Bytes
   function reverseBytes(b: TBytes): TBytes;
 
-  function ReverseBits(b: Byte): Byte;
   function ReverseBitsOfBytes(bytes: TBytes): TBytes;
 
   //Insecure random number generator from delphi lib, but sometimes good for non critical purposes...
   function randomBytes(count: byte): TBytes;
+  {$ifend}
+
   function concatBytes(const bytes: array of TBytes): TBytes;
+  function ReverseBits(b: Byte): Byte;
 
 
 implementation
   uses
     {$if defined(DXE_UP)}
       Spring.Cryptography,
+      Soap.EncdDecd,
     {$ifend}
-    Soap.EncdDecd, Math;
+     Math;
+
+{$if defined(DXE_UP)}
 
 function sha256OfBytes(const bytes: TBytes; count: Integer = 1): TBytes;
 begin
@@ -136,6 +142,44 @@ begin
   Result := decodeBase64(s);
 end;
 
+function ReverseBitsOfBytes(bytes: TBytes): TBytes;
+  var
+    i: Integer;
+begin
+  Result := reverseBytes(bytes);
+  i := Length(Result);
+  while i > 0 do begin
+    dec(i);
+    Result[i] := ReverseBits(Result[i]);
+  end;
+end;
+
+function randomBytes(count: byte): TBytes;
+begin
+  SetLength(Result,count);
+  if(count>0) then
+    CreateRandomNumberGenerator.GetBytes(Result);
+end;
+
+{$ifend}
+
+function concatBytes(const bytes: array of TBytes): TBytes;
+  var
+    tmp,i,index: Integer;
+    total: Integer;
+begin
+  total := length(bytes);
+  SetLength(Result,0);
+  index := 0;
+  for i := 0 to total - 1 do begin
+    tmp := Length(bytes[i]);
+    if(tmp = 0) then continue;
+    setLength(Result,Length(Result)+tmp);
+    Move(bytes[i][0],Result[index],tmp);
+    inc(index,tmp);
+  end;
+end;
+
 const
   Table: array [Byte] of Byte = (
     0,128,64,192,32,160,96,224,16,144,80,208,48,176,112,240,
@@ -161,41 +205,6 @@ begin
   Result := Table[b];
 end;
 
-function ReverseBitsOfBytes(bytes: TBytes): TBytes;
-  var
-    i: Integer;
-begin
-  Result := reverseBytes(bytes);
-  i := Length(Result);
-  while i > 0 do begin
-    dec(i);
-    Result[i] := ReverseBits(Result[i]);
-  end;
-end;
-
-function randomBytes(count: byte): TBytes;
-begin
-  SetLength(Result,count);
-  if(count>0) then
-    CreateRandomNumberGenerator.GetBytes(Result);
-end;
-
-function concatBytes(const bytes: array of TBytes): TBytes;
-  var
-    tmp,i,index: Integer;
-    total: Integer;
-begin
-  total := length(bytes);
-  SetLength(Result,0);
-  index := 0;
-  for i := 0 to total - 1 do begin
-    tmp := Length(bytes[i]);
-    if(tmp = 0) then continue;
-    setLength(Result,Length(Result)+tmp);
-    Move(bytes[i][0],Result[index],tmp);
-    inc(index,tmp);
-  end;
-end;
 
 
 end.
