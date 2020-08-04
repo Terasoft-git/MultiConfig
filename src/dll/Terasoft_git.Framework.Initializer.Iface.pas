@@ -34,8 +34,14 @@ interface
         DLL_ORIGINAL_DEBUG_NAME = '..\..\..\dll\Win64\Debug\MultiCfgIface.dll';
         DLL_NAME = 'MultiCfgIface64.dll';
       {$else}
-        DLL_ORIGINAL_DEBUG_NAME = '..\..\..\dll\Win32\Debug\MultiCfgIface.dll';
-        DLL_NAME = 'MultiCfgIface32.dll';
+        {$if defined(DXE_UP)}
+          DLL_ORIGINAL_DEBUG_NAME = '..\..\..\dll\Win32\Debug\MultiCfgIface.dll';
+          DLL_NAME = 'MultiCfgIface32.dll';
+        {$else}
+          DLL_ORIGINAL_DEBUG_NAME = '..\..\dll\Win32\Debug\MultiCfgIface.dll';
+          DLL_NAME = 'MultiCfgIface32.dll';
+        {$ifend}
+
       {$ifend}
 
     var
