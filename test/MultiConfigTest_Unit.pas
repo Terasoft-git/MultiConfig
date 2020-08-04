@@ -104,7 +104,7 @@ procedure TfrmTest.BitBtn3Click(Sender: TObject);
   var
     s: String;
 begin
-  globalCrypter.setSeedString(editSeed.Text);
+  globalCrypter .setSeedString(editSeed.Text);
 
   s := globalCrypter.encryptStringToBase64(editTextToEncrypt.Text);
   mm.Lines.Add(format('Encrypted Text: %s', [s]));
@@ -132,7 +132,7 @@ procedure TfrmTest.BitBtn5Click(Sender: TObject);
 begin
   mm.Lines.Clear;
   if(globalCrypter=nil) then
-    globalCrypter := createCrypter(bytesOf(editSeed.Text))
+    globalCrypter := createCrypter({$if defined(__MULTICFG_IMPL__)}bytesOf{$ifend}(editSeed.Text))
   else
     globalCrypter.setSeedString(editSeed.Text);
   //We provided some comand lines too;
@@ -149,6 +149,7 @@ begin
 
   //Memo must have scroll bars on, or a long string may wrap and cause problems to key/value pair;
 
+  multi.addReaderWriter(createConfigIniFile('..\..\common.ini','Crypted Ini',true,globalCrypter));
   reg := createConfigRegistry('\MyApp\MyTest');
   multi.addReaderWriter(reg);
 
@@ -228,6 +229,7 @@ begin
   loadFile('memo01.txt',Memo1.Lines,true);
   loadFile('memo02.txt',Memo2.Lines,true);
   loadFile('memo03.txt',Memo3.Lines,true);
+  globalCrypter := createCrypter({$if defined(__MULTICFG_IMPL__)}bytesOf{$ifend}(editSeed.Text));
 end;
 
 end.

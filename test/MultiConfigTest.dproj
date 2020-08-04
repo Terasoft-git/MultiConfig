@@ -47,7 +47,7 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
         <DCC_UnitSearchPath>..\src;..\src\MultiConfig;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-        <DCC_Define>ShareMM;__NO_MULTICFG_IMPL__z;$(DCC_Define)</DCC_Define>
+        <DCC_Define>ShareMM;__NO_MULTICFG_IMPL__;$(DCC_Define)</DCC_Define>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1046</VerInfo_Locale>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>

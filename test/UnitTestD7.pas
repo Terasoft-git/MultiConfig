@@ -86,6 +86,7 @@ begin
   mm.lines.add(m.ReadString('config','last',''));
   mm.lines.add(m.ReadString('config','testdatetime',''));
 
+  m.addReaderWriter(createConfigRegistry('\MyApp\MyTest'));
   m.addReaderWriter(createConfigIniFile('..\common.ini','Crypted Ini',true,globalCrypter));
   m.WriteBool('config','common',true);
 
