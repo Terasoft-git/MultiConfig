@@ -104,7 +104,10 @@ procedure TfrmTest.BitBtn3Click(Sender: TObject);
   var
     s: String;
 begin
-  globalCrypter.setSeed(BytesOf(editSeed.Text));
+  if(globalCrypter=nil) then
+    globalCrypter := createCrypter(bytesOf(editSeed.Text))
+  else
+    globalCrypter.setSeed(bytesOf(editSeed.Text));
 
   s := bytesToBase64String(globalCrypter.encryptString(editTextToEncrypt.Text));
   mm.Lines.Add(format('Encrypted Text: %s', [s]));
@@ -117,11 +120,16 @@ procedure TfrmTest.BitBtn4Click(Sender: TObject);
     b: TBytes;
     s: String;
 begin
+
   if(editEncrypted.Text='') then
     ShowError('There is not text to decrypt!');
 
+  if(globalCrypter=nil) then
+    globalCrypter := createCrypter(bytesOf(editSeed.Text))
+  else
+    globalCrypter.setSeed(bytesOf(editSeed.Text));
+
   b := base64StringToBytes(editEncrypted.Text);
-  globalCrypter.setSeed(bytesOf(editSeed.Text));
   b := globalCrypter.decryptBytes(b);
   s := StringOf(b);
   editTextToEncrypt.Text := s;
