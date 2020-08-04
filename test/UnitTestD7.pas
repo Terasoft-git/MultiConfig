@@ -22,9 +22,11 @@ type
     editToEncrypt: TLabeledEdit;
     editCrypted: TLabeledEdit;
     Button2: TButton;
+    Button3: TButton;
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -37,7 +39,8 @@ var
 implementation
   uses
     Terasoft_git.Framework.Cryptography, Terasoft_git.Framework.Bytes,
-  Terasoft_git.Framework.Types, Terasoft_git.Framework.VisualMessage;
+  Terasoft_git.Framework.Types, Terasoft_git.Framework.VisualMessage,
+  Terasoft_git.Framework.MultiConfig;
 
 {$R *.dfm}
 
@@ -46,7 +49,7 @@ procedure TForm1.Button1Click(Sender: TObject);
     crypt: ICryptografy;
     s: String;
 begin
-  crypt := createCrypter(stringToBytes(editSeed.Text));
+  crypt := createCrypter(editSeed.Text);
   s := crypt.encryptStringToBase64(editToEncrypt.Text);
   mm.lines.add(Format('Encrypted text: %s', [ s ] ));
   editCrypted.Text := s;
@@ -65,10 +68,20 @@ procedure TForm1.Button2Click(Sender: TObject);
 begin
   if(editCrypted.Text='') then
     ShowError('Nothing to decrypt.');
-  crypt := createCrypter(stringToBytes(editSeed.Text));
+  crypt := createCrypter(editSeed.Text);
   s := crypt.decryptBase64ToString(editCrypted.Text);
   mm.lines.add(Format('Decrypted text: %s', [ s ] ));
   editToEncrypt.Text := s;
+end;
+
+procedure TForm1.Button3Click(Sender: TObject);
+  var
+    m: IMultiConfig;
+begin
+  globalCrypter := createCrypter(editSeed.Text);
+  m := defaultMultiConfigIniFile(true,globalCrypter);
+  mm.lines.add(m.ReadString('config','last',''));
+
 end;
 
 end.

@@ -42,7 +42,7 @@ interface
   var
     globalCrypter: ICryptografy;
 
-  function createCrypter(const seed: TBytes): ICryptografy;
+  function createCrypter(const seed: {$if defined(__MULTICFG_IMPL__)}TBytes{$else}WideStringFramework{$ifend}): ICryptografy;
   function encryptStringToBase64(const str: String; wrapLines: boolean = false; crypter: ICryptografy = nil; padding: Char = '='): String;
   function decryptBase64ToString(const base64: String; decrypter: ICryptografy = nil; padding: Char = '='): String;
 
@@ -102,7 +102,7 @@ begin
   Result := decrypter.decryptBase64ToString(base64,padding);
 end;
 
-function createCrypter(const seed: TBytes): ICryptografy;
+function createCrypter(const seed: {$if defined(__MULTICFG_IMPL__)}TBytes{$else}WideStringFramework{$ifend}): ICryptografy;
  {$if defined(__CRYPTO_IMPL__)}
     var
       c: TCrypter;
@@ -113,7 +113,7 @@ begin
     c.setSeed(seed);
     Result := c;
  {$else}
-   Result := createIfaceDllMultiCfg.createCrypter(bytesToHexString(seed));
+   Result := createIfaceDllMultiCfg.createCrypter(seed);
  {$ifend}
 end;
 
