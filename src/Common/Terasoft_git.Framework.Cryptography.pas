@@ -20,7 +20,7 @@ interface
     //Simple interface for cryptografy
 
     ICryptografy = interface
-    ['{85DF9004-923C-4F27-AD53-682F9BB763B3}']
+    ['{CBD63C23-179E-4005-986C-195CD8CFF66E}']
       function encryptStringToBase64(const str: WideStringFramework; wrapLines: boolean = false; padding: Char = '='): WideStringFramework; stdcall;
       function decryptBase64ToString(const base64: WideStringFramework; padding: Char = '='): WideStringFramework; stdcall;
       procedure setSeedString(const seed: WideStringFramework);stdcall;
@@ -31,14 +31,13 @@ interface
 
     {$if defined(DXE_UP)}
       ICryptografyEx = interface(ICryptografy)
-      ['{AE572F47-B1C4-4725-83B1-34E50211632F}']
+      ['{366C2391-95B8-4412-A045-28F732A01FC3}']
         function encryptString(const str: WideStringFramework): TBytes;stdcall;
         function encryptBytes(const bytes: TBytes): TBytes;stdcall;
         function decryptBytes(const bytes: TBytes): TBytes;stdcall;
         procedure setSeed(const seed: TBytes);stdcall;
       end;
     {$ifend}
-
 
   var
     globalCrypter: ICryptografy;
@@ -72,6 +71,7 @@ implementation
       function encryptString(const str: WideStringFramework): TBytes;stdcall;
       function encryptBytes(const bytes: TBytes): TBytes;stdcall;
       function decryptBytes(const bytes: TBytes): TBytes;stdcall;
+      procedure setHexSeed(const hexSeed: WideStringFramework);stdcall;
       procedure setSeed(const seed: TBytes);stdcall;
       procedure setSaltLen(const value: Integer);stdcall;
       function getSaltlen: Integer;stdcall;
@@ -167,6 +167,11 @@ begin
 
   fSaltlen := value;
 
+end;
+
+procedure TCrypter.setHexSeed(const hexSeed: WideStringFramework);stdcall;
+begin
+  setSeed(hexStringToBytes(hexSeed));
 end;
 
 procedure TCrypter.setSeed(const seed: TBytes);
