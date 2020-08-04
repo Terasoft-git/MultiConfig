@@ -23,6 +23,7 @@ interface
       function encryptString(const str: WideStringFramework): TBytes;stdcall;
       function encryptBytes(const bytes: TBytes): TBytes;stdcall;
       function decryptBytes(const bytes: TBytes): TBytes;stdcall;
+      procedure setHexSeed(const hexSeed: WideStringFramework);stdcall;
       procedure setSeed(const seed: TBytes);stdcall;
       procedure setSaltLen(const value: Integer);stdcall;
       function getSaltlen: Integer;stdcall;
@@ -57,6 +58,7 @@ implementation
       function encryptString(const str: WideStringFramework): TBytes;stdcall;
       function encryptBytes(const bytes: TBytes): TBytes;stdcall;
       function decryptBytes(const bytes: TBytes): TBytes;stdcall;
+      procedure setHexSeed(const hexSeed: WideStringFramework);stdcall;
       procedure setSeed(const seed: TBytes);stdcall;
       procedure setSaltLen(const value: Integer);stdcall;
       function getSaltlen: Integer;stdcall;
@@ -156,6 +158,11 @@ begin
 
   fSaltlen := value;
 
+end;
+
+procedure TCrypter.setHexSeed(const hexSeed: WideStringFramework);stdcall;
+begin
+  setSeed(hexStringToBytes(hexSeed));
 end;
 
 procedure TCrypter.setSeed(const seed: TBytes);
