@@ -104,9 +104,9 @@ procedure TfrmTest.BitBtn3Click(Sender: TObject);
   var
     s: String;
 begin
-  globalCrypter.setSeed(BytesOf(editSeed.Text));
+  globalCrypter.setSeedString(editSeed.Text);
 
-  s := bytesToBase64String(globalCrypter.encryptString(editTextToEncrypt.Text));
+  s := globalCrypter.encryptStringToBase64(editTextToEncrypt.Text);
   mm.Lines.Add(format('Encrypted Text: %s', [s]));
   editEncrypted.Text := s;
 
@@ -114,16 +114,13 @@ end;
 
 procedure TfrmTest.BitBtn4Click(Sender: TObject);
   var
-    b: TBytes;
     s: String;
 begin
   if(editEncrypted.Text='') then
     ShowError('There is not text to decrypt!');
 
-  b := base64StringToBytes(editEncrypted.Text);
-  globalCrypter.setSeed(bytesOf(editSeed.Text));
-  b := globalCrypter.decryptBytes(b);
-  s := StringOf(b);
+  globalCrypter.setSeedString(editSeed.Text);
+  s := globalCrypter.decryptBase64ToString(editEncrypted.Text);
   editTextToEncrypt.Text := s;
   mm.Lines.Add(format('Decrypted Text: %s', [s]));
 end;
@@ -137,7 +134,7 @@ begin
   if(globalCrypter=nil) then
     globalCrypter := createCrypter(bytesOf(editSeed.Text))
   else
-    globalCrypter.setSeed(bytesOf(editSeed.Text));
+    globalCrypter.setSeedString(editSeed.Text);
   //We provided some comand lines too;
   //Default is to read from cmdlines, envvars and ini from exe.ini
   multi := defaultMultiConfigIniFile(true);

@@ -18,16 +18,27 @@ interface
   type
 
     //Simple interface for cryptografy
+
     ICryptografy = interface
-    ['{AE572F47-B1C4-4725-83B1-34E50211632F}']
-      function encryptString(const str: WideStringFramework): TBytes;stdcall;
-      function encryptBytes(const bytes: TBytes): TBytes;stdcall;
-      function decryptBytes(const bytes: TBytes): TBytes;stdcall;
-      procedure setSeed(const seed: TBytes);stdcall;
+    ['{85DF9004-923C-4F27-AD53-682F9BB763B3}']
+      function encryptStringToBase64(const str: WideStringFramework; wrapLines: boolean = false; padding: Char = '='): WideStringFramework; stdcall;
+      function decryptBase64ToString(const base64: WideStringFramework; padding: Char = '='): WideStringFramework; stdcall;
+      procedure setSeedString(const seed: WideStringFramework);stdcall;
       procedure setSaltLen(const value: Integer);stdcall;
       function getSaltlen: Integer;stdcall;
       property saltLen: Integer read getSaltlen write setSaltlen;
     end;
+
+    {$if defined(DXE_UP)}
+      ICryptografyEx = interface(ICryptografy)
+      ['{AE572F47-B1C4-4725-83B1-34E50211632F}']
+        function encryptString(const str: WideStringFramework): TBytes;stdcall;
+        function encryptBytes(const bytes: TBytes): TBytes;stdcall;
+        function decryptBytes(const bytes: TBytes): TBytes;stdcall;
+        procedure setSeed(const seed: TBytes);stdcall;
+      end;
+    {$ifend}
+
 
   var
     globalCrypter: ICryptografy;
@@ -50,7 +61,11 @@ implementation
  {$if defined(__CRYPTO_IMPL__)}
   type
     // Simple Crypter that uses Spring.Cryptography
-    TCrypter=class(TInterfacedObject, ICryptografy)
+    TCrypter=class(TInterfacedObject, ICryptografy
+          {$if defined(DXE_UP)}
+            , ICryptografyEx
+          {$ifend}
+    )
     protected
       fSaltlen: Integer;
       crypter: ISymmetricAlgorithm;
@@ -60,6 +75,9 @@ implementation
       procedure setSeed(const seed: TBytes);stdcall;
       procedure setSaltLen(const value: Integer);stdcall;
       function getSaltlen: Integer;stdcall;
+      function encryptStringToBase64(const str: WideStringFramework; wrapLines: boolean = false; padding: Char = '='): WideStringFramework; stdcall;
+      function decryptBase64ToString(const base64: WideStringFramework; padding: Char = '='): WideStringFramework; stdcall;
+      procedure setSeedString(const seed: WideStringFramework);stdcall;
     public
       constructor Create;
       destructor Destroy; override;
@@ -72,11 +90,7 @@ begin
     crypter := globalCrypter;
   if(crypter=nil) then
     raise Exception.Create('encryptStringToBase64: Crypter not specified.');
-  {$if defined(DXE_UP)}
-    Result := bytesToBase64String( crypter.encryptString(str), wrapLines, padding );
-  {$else}
-    raise Exception.Create('encryptStringToBase64: Not suported.');
-  {$ifend}
+  Result := crypter.encryptStringToBase64(str, wrapLines, padding );
 end;
 
 function decryptBase64ToString(const base64: String; decrypter: ICryptografy = nil; padding: Char = '='): String;
@@ -85,18 +99,19 @@ begin
     decrypter := globalCrypter;
   if(decrypter=nil) then
     raise Exception.Create('encryptStringToBase64: Decrypter not specified.');
-  {$if defined(DXE_UP)}
-    Result := StringOf(decrypter.decryptBytes(base64StringToBytes(base64,padding)));
-  {$else}
-    raise Exception.Create('decryptBase64ToString: Not suported.');
-  {$ifend}
+  Result := decrypter.decryptBase64ToString(base64,padding);
 end;
 
 function createCrypter(const seed: TBytes): ICryptografy;
+ {$if defined(__CRYPTO_IMPL__)}
+    var
+      c: TCrypter;
+ {$ifend}
 begin
  {$if defined(__CRYPTO_IMPL__)}
-    Result := TCrypter.Create;
-    Result.setSeed(seed);
+    c := TCrypter.Create;
+    c.setSeed(seed);
+    Result := c;
  {$else}
    Result := createIfaceDllMultiCfg.createCrypter(bytesToHexString(seed));
  {$ifend}
@@ -164,6 +179,22 @@ begin
   k := copy(sha512OfBytes(ReverseBitsOfBytes(k)),0,crypter.BlockSize div 8);
   crypter.IV := k;
 end;
+
+procedure TCrypter.setSeedString(const seed: WideStringFramework);stdcall;
+begin
+  setSeed(BytesOf(seed));
+end;
+
+function TCrypter.encryptStringToBase64(const str: WideStringFramework; wrapLines: boolean = false; padding: Char = '='): WideStringFramework;
+begin
+  Result := bytesToBase64String(encryptString(str),wrapLines,padding);
+end;
+
+function TCrypter.decryptBase64ToString(const base64: WideStringFramework; padding: Char = '='): WideStringFramework;
+begin
+  Result := StringOf(decryptBytes(base64StringToBytes(base64,padding)));
+end;
+
 {$ifend}
 
 initialization
