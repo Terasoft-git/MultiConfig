@@ -34,8 +34,6 @@ interface
       ['{3BF00900-8FE6-462B-82C5-48C9C228B03A}']
       function ReadString(const Section, Ident: WideStringFramework; const default: WideStringFramework = ''; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): WideStringFramework;stdcall;
       function ReadInteger(const Section, Ident: WideStringFramework; const Default: Integer = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): Integer;stdcall;
-      procedure populateIni(ini: TCustomIniFile; translate: boolean = true; printSource: boolean = false);stdcall;
-      function printSource(list: TListSource=nil): TListSource;stdcall;
       function getCrypted: boolean;stdcall;
       procedure setCrypted(const value: boolean);stdcall;
       function getCrypter: ICryptografy;stdcall;
@@ -43,6 +41,11 @@ interface
       function getSource: WideStringFramework;stdcall;
       property crypter: ICryptografy read getCrypter write setCrypter;
       property crypted: boolean read getCrypted write setCrypted;
+      {$if defined(DXE_UP)}
+        procedure populateIni(ini: TCustomIniFile; translate: boolean = true; printSource: boolean = false);stdcall;
+        function printSource(list: TListSource=nil): TListSource;stdcall;
+      {$ifend}
+
     end;
 
     IConfigWriter = interface
@@ -50,7 +53,9 @@ interface
       procedure WriteString(const Section, Ident, value: WideStringFramework; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
       procedure WriteInteger(const Section, Ident: WideStringFramework; const value: Integer; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
       procedure deleteKey(const Section: WideStringFramework = ''; const Ident: WideStringFramework = '');stdcall;
-      function printSource(list: TListSource=nil): TListSource;stdcall;
+      {$if defined(DXE_UP)}
+        function printSource(list: TListSource=nil): TListSource;stdcall;
+      {$ifend}
     end;
 
     IConfigReaderWriter = interface
@@ -69,8 +74,6 @@ interface
       function getMultiWriter: IConfigWriter;stdcall;
       function addReaderWriter(readerWriter: IConfigReaderWriter; position: Integer = MAXINT): IMultiConfig;stdcall;
 
-      procedure populateIni(ini: TCustomIniFile; translate: boolean = true; printSource: boolean = false);stdcall;
-
       //for Readers
       function ReadString(const Section, Ident: WideStringFramework; const Default: WideStringFramework = ''; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): WideStringFramework;stdcall;
       function ReadInteger(const Section, Ident: WideStringFramework; const Default: Integer = 0; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): Integer;stdcall;
@@ -87,9 +90,6 @@ interface
       procedure WriteBool(const Section, Ident: WideStringFramework; const value: boolean; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
       procedure WriteExtended(const Section, Ident: WideStringFramework; const value: Extended; crypt: boolean = false; crypter: ICryptografy = nil);stdcall;
 
-      procedure ReadSectionValues(const Section: WideStringFramework; Strings: TStrings);stdcall;
-      procedure ReadSections(Strings: TStrings);stdcall;
-
       procedure deleteKey(const Section: WideStringFramework = ''; const Ident: WideStringFramework = '');stdcall;
 
       function getDefaultReaderWriter: IConfigReaderWriter; stdcall;
@@ -97,12 +97,10 @@ interface
       function setLastAsDefaultReaderWriter: IMultiConfig; stdcall;
       function translate(const text: WideStringFramework; const initMark: WideStringFramework = ''; const endMark: WideStringFramework = ''): WideStringFramework;stdcall;
       function toString(traduzir: boolean = true; printSource: boolean = false): WideStringFramework;stdcall;
-      function ReadSectionsList(lista: IStrings = nil): IStrings;stdcall;
       function ReadSectionValuesList(const Section: WideStringFramework; list: IStrings = nil): IStrings;stdcall;
 
       function valueExists(const Section, Ident: WideStringFramework): boolean;stdcall;
 
-      function printSource(list: TListSource=nil): TListSource;stdcall;
       function getReaderWriterAt(const index: Integer): IConfigReaderWriter;stdcall;
       function getReaderAt(const index: Integer): IConfigReader;stdcall;
       function getWriterAt(const index: Integer): IConfigWriter;stdcall;
@@ -110,6 +108,14 @@ interface
       property multiReader: IConfigReader read getMultiReader;
       property multiWriter: IConfigWriter read getMultiWriter;
       property defaultReaderWriter: IConfigReaderWriter read getDefaultReaderWriter write setDefaultReaderWriter;
+      {$if defined(DXE_UP)}
+        // Those are delphi XE+ specific
+        function printSource(list: TListSource=nil): TListSource;stdcall;
+        function ReadSectionsList(lista: IStrings = nil): IStrings;stdcall;
+        procedure ReadSectionValues(const Section: WideStringFramework; Strings: TStrings);stdcall;
+        procedure ReadSections(Strings: TStrings);stdcall;
+        procedure populateIni(ini: TCustomIniFile; translate: boolean = true; printSource: boolean = false);stdcall;
+      {$ifend}
 
     end;
 

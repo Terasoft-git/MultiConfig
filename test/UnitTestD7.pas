@@ -80,7 +80,26 @@ procedure TForm1.Button3Click(Sender: TObject);
 begin
   globalCrypter := createCrypter(editSeed.Text);
   m := defaultMultiConfigIniFile(true,globalCrypter);
+  // Sources must be '..' from CWD
+  mm.lines.add(m.ReadString('config','testdatetime',''));
+  m.WriteDateTime('config','testdatetime',Now);
   mm.lines.add(m.ReadString('config','last',''));
+  mm.lines.add(m.ReadString('config','testdatetime',''));
+
+  m.addReaderWriter(createConfigIniFile('..\common.ini','Crypted Ini',true,globalCrypter));
+  m.WriteBool('config','common',true);
+
+  mm.Lines.Add(StringofChar('=',30));
+  mm.Lines.Add('Dump of all chain as one single ini file');
+  mm.Lines.Add(StringofChar('=',30));
+
+  mm.Lines.Text := mm.Lines.Text + m.toString(false);
+
+  mm.Lines.Add(StringofChar('=',30));
+  mm.Lines.Add('Dump of all chain as one single ini file + sources');
+  mm.Lines.Add(StringofChar('=',30));
+
+  mm.Lines.Text := mm.Lines.Text + m.toString(false,true);
 
 end;
 
