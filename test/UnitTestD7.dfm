@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 124
   Width = 1305
   Height = 675
-  Caption = 'Form1'
+  Caption = 'Tests via MultiCfgIface.dll'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -82,6 +82,15 @@ object Form1: TForm1
         Caption = 'Decrypt'
         TabOrder = 5
         OnClick = Button2Click
+      end
+      object Button3: TButton
+        Left = 600
+        Top = 104
+        Width = 177
+        Height = 25
+        Caption = 'Test MultiCfg DLL'
+        TabOrder = 6
+        OnClick = Button3Click
       end
     end
   end
