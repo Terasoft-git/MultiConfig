@@ -1,3 +1,6 @@
+
+{$i MultiCfg.inc}
+
 unit Terasoft_git.Framework.Bytes;
 
 interface
@@ -28,7 +31,10 @@ interface
 
 implementation
   uses
-    Spring.Cryptography, Soap.EncdDecd, Math;
+    {$if defined(DXE_UP)}
+      Spring.Cryptography,
+    {$ifend}
+    Soap.EncdDecd, Math;
 
 function sha256OfBytes(const bytes: TBytes; count: Integer = 1): TBytes;
 begin

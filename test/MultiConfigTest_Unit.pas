@@ -162,11 +162,11 @@ begin
     multi.WriteDateTime('config','app',now);
     multi.addReaderWriter(createConfigIniStrings(Memo3.Lines,'Memo3',true,nil));
   {$else}
-    multi.addReaderWriter(createConfigIniString(Memo1.Lines.Text));
-    rw := createConfigIniString(Memo2.Lines.Text);
+    multi.addReaderWriter(createConfigIniString(Memo1.Lines.Text,'Memo1'));
+    rw := createConfigIniString(Memo2.Lines.Text,'Memo2');
     multi.addReaderWriter(rw);
     multi.WriteDateTime('config','app',now);
-    multi.addReaderWriter(createConfigIniString(Memo3.Lines.Text));
+    multi.addReaderWriter(createConfigIniString(Memo3.Lines.Text,'Memo3'));
   {$ifend}
 
   reg.writer.WriteString('in','value','test');
@@ -193,7 +193,7 @@ begin
   mm.Lines.Text := mm.Lines.Text + multi.toString(false);
 
   mm.Lines.Add(StringofChar('=',30));
-  mm.Lines.Add('Dump of all chain as one single ini file +- sources');
+  mm.Lines.Add('Dump of all chain as one single ini file + sources');
   mm.Lines.Add(StringofChar('=',30));
 
   mm.Lines.Text := mm.Lines.Text + multi.toString(false,true);
