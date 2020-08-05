@@ -34,7 +34,7 @@ interface
 
     const
       {$if defined(CPUX64)}
-        DLL_NAME = 'MultiCfgIface32.dll';
+        DLL_NAME = 'MultiCfgIface64.dll';
       {$else}
         DLL_NAME = 'MultiCfgIface32.dll';
       {$ifend}
