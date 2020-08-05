@@ -6,6 +6,7 @@ all: clean
    make dll32 
    make dll64 
    gpg --output $(OUT)\SHA256SUMS.asc --clear-sign $(OUT)\SHA256SUMS
+   -del $(OUT)\SHA256SUMS
    dir $(OUT)
 
 dll32: 
