@@ -21,7 +21,11 @@ interface
       function createConfigCmdLine(const prefix: WideStringFramework = ''; const hint: WideStringFramework = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter; stdcall;
       function createConfigEnvVar(const prefix: WideStringFramework = ''; const hint: WideStringFramework = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter; stdcall;
 
-      function createCrypter(const hexSeed: WideStringFramework): ICryptografy;stdcall;
+      function createCrypter(const hexSeed: WideStringFramework): ICryptografyEx;stdcall;
+      function getGlobalCrypter: ICryptografyEx; stdcall;
+      procedure setGlobalCrypter(const value: ICryptografyEx); stdcall;
+
+      property globalCrypter: ICryptografyEx read getGlobalCrypter write setGlobalCrypter;
     end;
 
 
@@ -29,19 +33,15 @@ interface
 
 
     const
-      DLL_ORIGINAL_NAME = 'MultiCfgIface.dll';
       {$if defined(CPUX64)}
-        DLL_ORIGINAL_DEBUG_NAME = '..\..\..\dll\Win64\Debug\MultiCfgIface.dll';
-        DLL_NAME = 'MultiCfgIface64.dll';
+        DLL_NAME = 'MultiCfgIface32.dll';
       {$else}
-        {$if defined(DXE_UP)}
-          DLL_ORIGINAL_DEBUG_NAME = '..\..\..\dll\Win32\Debug\MultiCfgIface.dll';
-          DLL_NAME = 'MultiCfgIface32.dll';
-        {$else}
-          DLL_ORIGINAL_DEBUG_NAME = '..\..\dll\Win32\Debug\MultiCfgIface.dll';
-          DLL_NAME = 'MultiCfgIface32.dll';
-        {$ifend}
-
+        DLL_NAME = 'MultiCfgIface32.dll';
+      {$ifend}
+      {$if defined(DXE_UP)}
+        DLL_BIN_NAME = '..\..\..\dll\out\' + DLL_NAME;
+      {$else}
+        DLL_BIN_NAME = '..\..\dll\out\' + DLL_NAME;
       {$ifend}
 
     var
@@ -69,7 +69,7 @@ begin
   Result := fName;
   {$if defined(DEBUG)}
     if(Result = '') then
-      Result := DLL_ORIGINAL_DEBUG_NAME;
+      Result := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))) + DLL_BIN_NAME;
       exit;
   {$else}
     if(Result = '') then

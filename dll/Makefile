@@ -5,8 +5,8 @@ PROJ=MultiCfgIface
 all: clean 
    make dll32 
    make dll64 
-   dir $(OUT)
    gpg --output $(OUT)\SHA256SUMS.asc --clear-sign $(OUT)\SHA256SUMS
+   dir $(OUT)
 
 dll32: 
    msbuild "$(PROJ).dproj" $(MULTI) /p:Platform="Win32" /p:Config=Release;DCC_ExeOutput="$(OUT)" /t:Build

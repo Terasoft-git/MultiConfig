@@ -72,3 +72,4 @@ test/Win32
 test/Win64
 src/3rd
 Out/
+test/D7/

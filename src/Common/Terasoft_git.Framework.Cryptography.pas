@@ -18,26 +18,29 @@ interface
   type
 
     //Simple interface for cryptografy
+    ICryptografy = interface;
 
     ICryptografy = interface
     ['{CBD63C23-179E-4005-986C-195CD8CFF66E}']
       function encryptStringToBase64(const str: WideStringFramework; wrapLines: boolean = false; padding: Char = '='): WideStringFramework; stdcall;
       function decryptBase64ToString(const base64: WideStringFramework; padding: Char = '='): WideStringFramework; stdcall;
-      procedure setSeedString(const seed: WideStringFramework);stdcall;
+      function setSeedString(const seed: WideStringFramework): ICryptografy; stdcall;
       procedure setSaltLen(const value: Integer);stdcall;
       function getSaltlen: Integer;stdcall;
       property saltLen: Integer read getSaltlen write setSaltlen;
     end;
 
+    ICryptografyEx = interface(ICryptografy)
+    ['{1B874AE6-D663-42CA-B7AB-E6F54F8095E5}']
+      //Dummy function
+      function _self: ICryptografy;
     {$if defined(DXE_UP)}
-      ICryptografyEx = interface(ICryptografy)
-      ['{366C2391-95B8-4412-A045-28F732A01FC3}']
         function encryptString(const str: WideStringFramework): TBytes;stdcall;
         function encryptBytes(const bytes: TBytes): TBytes;stdcall;
         function decryptBytes(const bytes: TBytes): TBytes;stdcall;
-        procedure setSeed(const seed: TBytes);stdcall;
-      end;
+        function setSeed(const seed: TBytes): ICryptografy;stdcall;
     {$ifend}
+    end;
 
   var
     globalCrypter: ICryptografy;
@@ -68,16 +71,17 @@ implementation
     protected
       fSaltlen: Integer;
       crypter: ISymmetricAlgorithm;
+      function _self: ICryptografy;
       function encryptString(const str: WideStringFramework): TBytes;stdcall;
       function encryptBytes(const bytes: TBytes): TBytes;stdcall;
       function decryptBytes(const bytes: TBytes): TBytes;stdcall;
       procedure setHexSeed(const hexSeed: WideStringFramework);stdcall;
-      procedure setSeed(const seed: TBytes);stdcall;
+      function setSeed(const seed: TBytes): ICryptografy;stdcall;
       procedure setSaltLen(const value: Integer);stdcall;
       function getSaltlen: Integer;stdcall;
       function encryptStringToBase64(const str: WideStringFramework; wrapLines: boolean = false; padding: Char = '='): WideStringFramework; stdcall;
       function decryptBase64ToString(const base64: WideStringFramework; padding: Char = '='): WideStringFramework; stdcall;
-      procedure setSeedString(const seed: WideStringFramework);stdcall;
+      function setSeedString(const seed: WideStringFramework): ICryptografy;stdcall;
     public
       constructor Create;
       destructor Destroy; override;
@@ -174,7 +178,7 @@ begin
   setSeed(hexStringToBytes(hexSeed));
 end;
 
-procedure TCrypter.setSeed(const seed: TBytes);
+function TCrypter.setSeed(const seed: TBytes): ICryptografy;
   var
     k: TBytes;
 begin
@@ -183,11 +187,13 @@ begin
   crypter.Key := k;
   k := copy(sha512OfBytes(ReverseBitsOfBytes(k)),0,crypter.BlockSize div 8);
   crypter.IV := k;
+  Result := self;
 end;
 
-procedure TCrypter.setSeedString(const seed: WideStringFramework);stdcall;
+function TCrypter.setSeedString(const seed: WideStringFramework): ICryptografy;stdcall;
 begin
   setSeed(BytesOf(seed));
+  Result := self;
 end;
 
 function TCrypter.encryptStringToBase64(const str: WideStringFramework; wrapLines: boolean = false; padding: Char = '='): WideStringFramework;
@@ -198,6 +204,11 @@ end;
 function TCrypter.decryptBase64ToString(const base64: WideStringFramework; padding: Char = '='): WideStringFramework;
 begin
   Result := StringOf(decryptBytes(base64StringToBytes(base64,padding)));
+end;
+
+function TCrypter._self: ICryptografy;
+begin
+  Result := self;
 end;
 
 {$ifend}

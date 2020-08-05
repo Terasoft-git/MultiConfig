@@ -26,8 +26,10 @@ implementation
       function createConfigRegistry(const path: WideStringFramework = ''; rootkey: HKEY = 0; const hint: WideStringFramework = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter; stdcall;
       function createConfigCmdLine(const prefix: WideStringFramework = ''; const hint: WideStringFramework = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter; stdcall;
       function createConfigEnvVar(const prefix: WideStringFramework = ''; const hint: WideStringFramework = ''; crypted: boolean = false; crypter: ICryptografy = nil): IConfigReaderWriter; stdcall;
+      function getGlobalCrypter: ICryptografyEx; stdcall;
+      procedure setGlobalCrypter(const value: ICryptografyEx); stdcall;
 
-      function createCrypter(const hexSeed: WideStringFramework): ICryptografy; stdcall;
+      function createCrypter(const hexSeed: WideStringFramework): ICryptografyEx; stdcall;
     public
       constructor Create;
     end;
@@ -43,6 +45,8 @@ end;
 constructor TCreator.Create;
 begin
   inherited;
+  if(globalCrypter=NIL) THEN
+    globalCrypter := createCrypter('DUMMY');
   initLRTimer;
 end;
 
@@ -71,9 +75,9 @@ begin
   Result := Terasoft_git.Framework.MultiConfig.createConfigRegistry(path,rootkey,hint,crypted,crypter);
 end;
 
-function TCreator.createCrypter(const hexSeed: WideStringFramework): ICryptografy;
+function TCreator.createCrypter(const hexSeed: WideStringFramework): ICryptografyEx;
 begin
-  Result := Terasoft_git.Framework.Cryptography.createCrypter(hexStringToBytes(hexSeed));
+  Supports(Terasoft_git.Framework.Cryptography.createCrypter(hexStringToBytes(hexSeed)),ICryptografyEx,Result);
 end;
 
 function TCreator.createMultiConfig: IMultiConfig;
@@ -84,6 +88,16 @@ end;
 function TCreator.defaultMultiConfigIniFile(crypted: boolean; crypter: ICryptografy): IMultiConfig;
 begin
   Result := Terasoft_git.Framework.MultiConfig.defaultMultiConfigIniFile(crypted,crypter);
+end;
+
+function TCreator.getGlobalCrypter: ICryptografyEx;
+begin
+  Supports(globalCrypter,ICryptografyEx,Result);
+end;
+
+procedure TCreator.setGlobalCrypter(const value: ICryptografyEx);
+begin
+  globalCrypter := value;
 end;
 
 end.

@@ -58,7 +58,7 @@ implementation
     Terasoft_git.Framework.Lock.Files, Terasoft_git.Framework.VisualMessage,
     Terasoft_git.Framework.Timer, Terasoft_git.Framework.Cryptography,
     IniFiles,
-    Terasoft_git.Framework.Bytes;
+    Terasoft_git.Framework.Bytes, Terasoft_git.Framework.Initializer.Iface;
 
 procedure TfrmTest.BitBtn1Click(Sender: TObject);
   function lockIt(timeout: Integer = 2000): ILock;
@@ -104,7 +104,11 @@ procedure TfrmTest.BitBtn3Click(Sender: TObject);
   var
     s: String;
 begin
-  globalCrypter .setSeedString(editSeed.Text);
+  {$if defined(__MULTICFG_IMPL__)}
+    globalCrypter := createCrypter({$if defined(__MULTICFG_IMPL__)}bytesOf{$ifend}(editSeed.Text));
+  {$else}
+    globalCrypter := createIfaceDllMultiCfg.globalCrypter.setSeedString(editSeed.Text);
+  {$ifend}
 
   s := globalCrypter.encryptStringToBase64(editTextToEncrypt.Text);
   mm.Lines.Add(format('Encrypted Text: %s', [s]));
@@ -119,7 +123,11 @@ begin
   if(editEncrypted.Text='') then
     ShowError('There is not text to decrypt!');
 
-  globalCrypter.setSeedString(editSeed.Text);
+  {$if defined(__MULTICFG_IMPL__)}
+    globalCrypter := createCrypter({$if defined(__MULTICFG_IMPL__)}bytesOf{$ifend}(editSeed.Text));
+  {$else}
+    globalCrypter := createIfaceDllMultiCfg.globalCrypter.setSeedString(editSeed.Text);
+  {$ifend}
   s := globalCrypter.decryptBase64ToString(editEncrypted.Text);
   editTextToEncrypt.Text := s;
   mm.Lines.Add(format('Decrypted Text: %s', [s]));
@@ -131,10 +139,12 @@ procedure TfrmTest.BitBtn5Click(Sender: TObject);
     rw, reg: IConfigReaderWriter;
 begin
   mm.Lines.Clear;
-  if(globalCrypter=nil) then
-    globalCrypter := createCrypter({$if defined(__MULTICFG_IMPL__)}bytesOf{$ifend}(editSeed.Text))
-  else
-    globalCrypter.setSeedString(editSeed.Text);
+  {$if defined(__MULTICFG_IMPL__)}
+    globalCrypter := createCrypter({$if defined(__MULTICFG_IMPL__)}bytesOf{$ifend}(editSeed.Text));
+  {$else}
+    globalCrypter := createIfaceDllMultiCfg.globalCrypter.setSeedString(editSeed.Text);
+  {$ifend}
+
   //We provided some comand lines too;
   //Default is to read from cmdlines, envvars and ini from exe.ini
   multi := defaultMultiConfigIniFile(true);

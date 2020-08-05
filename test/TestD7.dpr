@@ -7,7 +7,8 @@ uses
   Terasoft_git.Framework.Types in '..\src\Common\Terasoft_git.Framework.Types.pas',
   Terasoft_git.Framework.Bytes in '..\src\Common\Terasoft_git.Framework.Bytes.pas',
   Terasoft_git.Framework.Cryptography in '..\src\Common\Terasoft_git.Framework.Cryptography.pas',
-  Terasoft_git.Framework.VisualMessage in '..\src\Common\Terasoft_git.Framework.VisualMessage.pas';
+  Terasoft_git.Framework.VisualMessage in '..\src\Common\Terasoft_git.Framework.VisualMessage.pas',
+  Terasoft_git.Framework.Initializer.Iface in '..\src\dll\Terasoft_git.Framework.Initializer.Iface.pas';
 
 {$R *.res}
 
