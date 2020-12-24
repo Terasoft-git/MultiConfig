@@ -1,6 +1,8 @@
 
 {$i multicfg.inc}
 
+{Testing gpg sigining over Yubikey}
+
 unit MultiConfigTest_Unit;
 
 interface
