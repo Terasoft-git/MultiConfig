@@ -45,7 +45,6 @@ interface
         procedure populateIni(ini: TCustomIniFile; translate: boolean = true; printSource: boolean = false);stdcall;
         function printSource(list: TListSource=nil): TListSource;stdcall;
       {$ifend}
-
     end;
 
     IConfigWriter = interface
@@ -63,8 +62,13 @@ interface
       function getReader: IConfigReader;stdcall;
       function getWriter: IConfigWriter;stdcall;
 
+      procedure setEnabled(const value: boolean);
+      function getEnabled: boolean;
+
       property reader: IConfigReader read getReader;
       property writer: IConfigWriter read getWriter;
+
+      property enabled: boolean read getEnabled write setEnabled;
 
     end;
 
@@ -320,6 +324,7 @@ begin
     w := nil;
     r := nil;
     for i := Low(fList) to High(fList) do begin
+      if not fList[i].enabled then continue;
       r := fList[i].reader;
       w := fList[i].writer;
       if(r.ReadString(section,Ident,invalidStr)<>invalidStr) then
@@ -337,7 +342,8 @@ begin
       vamos apagar de todos
     }
     for i := Low(fList) to High(fList) do
-      fList[i].writer.deleteKey(section,ident);
+      if fList[i].enabled then
+        fList[i].writer.deleteKey(section,ident);
   end;
 end;
 
@@ -401,7 +407,8 @@ procedure TMultiConfig.populateIni(ini: TCustomIniFile; translate, printSource: 
 begin
   if(ini=nil) then exit;
   for i := High(fList) downto Low(fList) do
-    fList[i].reader.populateIni(ini,false,printSource);
+    if fList[i].enabled then
+      fList[i].reader.populateIni(ini,false,printSource);
   if(translate) then begin
     listaSec := createIStrings;;
     listaIdent := createIStrings;
@@ -503,6 +510,7 @@ begin
     iterate each reader to get the value from it...
   }
   for i := Low(fList) to High(fList) do begin
+    if not fList[i].enabled then continue;
     r := fList[i].reader;
     v := r.ReadString(section,Ident,invalidStr,decrypt,false,decrypter);
     if(v<>invalidStr) then begin
@@ -659,6 +667,7 @@ begin
   w := nil;
   r := nil;
   for p in fList do begin
+    if not p.enabled then continue;
     r := p.reader;
     w := p.writer;
     if(r.ReadString(section,Ident,invalidStr,crypt,false,crypter)<>invalidStr) then
@@ -679,7 +688,8 @@ function TMultiConfig.printSource(list: TListSource): TListSource;
 begin
   Result := checkListSource(list);
   for p in fList do
-    p.reader.printSource(list);
+    if p.enabled then
+      p.reader.printSource(list);
 end;
 
 function checkListSource(var list: TListSource): TListSource;

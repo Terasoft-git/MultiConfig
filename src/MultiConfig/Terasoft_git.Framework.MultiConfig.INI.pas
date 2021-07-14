@@ -37,6 +37,7 @@ implementation
       fStrings: TStrings;
       fCrypter: ICryptografy;
       fCrypted: boolean;
+      fEnabled: boolean;
       function getReader: IConfigReader;stdcall;
       function getWriter: IConfigWriter;stdcall;
       function ReadString(const Section, Ident: WideStringFramework; const default: WideStringFramework = ''; decrypt: boolean = false; translate: boolean = true; decrypter: ICryptografy = nil): WideStringFramework;stdcall;
@@ -53,6 +54,8 @@ implementation
       function printSource(list: TListSource): TListSource;stdcall;
       procedure updateIniFile;stdcall;
       procedure loadData;stdcall;
+      procedure setEnabled(const value: boolean);
+      function getEnabled: boolean;
     public
       constructor Create(aInif: TCustomIniFile; const hint: String; strings: TStrings = nil; crypted: boolean = false; crypter: ICryptografy = nil);
       destructor Destroy; override;
@@ -228,6 +231,7 @@ end;
 constructor TIni.Create(aInif: TCustomIniFile; const hint: String; strings: TStrings; crypted: boolean; crypter: ICryptografy);
 begin
   inherited Create;
+  fEnabled := true;
   fCrypted := crypted;
   fCrypter := crypter;
   fStrings := Strings;
@@ -235,6 +239,16 @@ begin
   fHint:=hint;
   if(ainif.FileName<>'') and (ainif is TMemIniFile) then
     lck := FileILock(inif.FileName + '.lock');
+end;
+
+function TIni.getEnabled: boolean;
+begin
+  Result := fEnabled;
+end;
+
+procedure TIni.setEnabled(const value: boolean);
+begin
+  fEnabled := value;
 end;
 
 procedure TIni.loadData;
