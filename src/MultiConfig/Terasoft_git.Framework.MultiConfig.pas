@@ -109,9 +109,9 @@ interface
       function getReaderAt(const index: Integer): IConfigReader;stdcall;
       function getWriterAt(const index: Integer): IConfigWriter;stdcall;
 
-      property multiReader: IConfigReader read getMultiReader;
-      property multiWriter: IConfigWriter read getMultiWriter;
-      property defaultReaderWriter: IConfigReaderWriter read getDefaultReaderWriter write setDefaultReaderWriter;
+      function add(value: IMUltiConfig): IMUltiConfig;
+      function addTo(value: IMUltiConfig): IMUltiConfig;
+
       {$if defined(DXE_UP)}
         // Those are delphi XE+ specific
         function printSource(list: TListSource=nil): TListSource;stdcall;
@@ -120,6 +120,10 @@ interface
         procedure ReadSections(Strings: TStrings);stdcall;
         procedure populateIni(ini: TCustomIniFile; translate: boolean = true; printSource: boolean = false);stdcall;
       {$ifend}
+
+      property multiReader: IConfigReader read getMultiReader;
+      property multiWriter: IConfigWriter read getMultiWriter;
+      property defaultReaderWriter: IConfigReaderWriter read getDefaultReaderWriter write setDefaultReaderWriter;
 
     end;
 
@@ -196,6 +200,9 @@ implementation
       function getReaderWriterAt(const index: Integer): IConfigReaderWriter;stdcall;
       function getReaderAt(const index: Integer): IConfigReader;stdcall;
       function getWriterAt(const index: Integer): IConfigWriter;stdcall;
+
+      function add(value: IMultiConfig): IMultiConfig;
+      function addTo(value: IMultiConfig): IMultiConfig;
 
     public
       constructor Create;
@@ -655,6 +662,25 @@ end;
 procedure TMultiConfig.WriteInteger(const Section, Ident: WideStringFramework; Const value: Integer; crypt: boolean; crypter: ICryptografy);
 begin
   WriteString(section,Ident,IntToStr(value),crypt,crypter);
+end;
+
+function TMultiConfig.add(value: IMultiConfig): IMultiConfig;
+begin
+  Result := self;
+  if(value=nil) then exit;
+  value.addTo(Result);
+end;
+
+function TMultiConfig.addTo(value: IMultiConfig): IMultiConfig;
+  var
+    p: IConfigReaderWriter;
+begin
+  Result := self;
+  if(value=nil) or (fList=nil) then exit;
+  for p in fList do
+    value.addReaderWriter(p);
+  if assigned(fDefaultReaderWriter) then
+    value.defaultReaderWriter := fDefaultReaderWriter;
 end;
 
 procedure TMultiConfig.WriteString(const Section, Ident, value: WideStringFramework; crypt: boolean; crypter: ICryptografy);
